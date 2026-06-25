@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" id="theme-color" content="#E30613">
   <title>AgentBook Premium</title>
+  <meta name="theme-color" id="theme-color" content="#ff3b30">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root {
       --airtel-color: #ff3b30;
@@ -911,6 +914,13 @@
           location.reload();
         }
       }
+    }
+
+    // PWA Service Worker for true offline phone installation
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => console.log('SW Registration failed', err));
+      });
     }
 
     window.onload = init;
