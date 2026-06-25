@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" id="theme-color" content="#E30613">
   <title>AgentBook Premium</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --airtel-color: #ff3b30;
@@ -27,7 +26,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
@@ -166,7 +165,7 @@
       outline: none;
       border-color: var(--mtn-color);
     }
-    input[type="number"] { font-family: 'Inter', monospace; font-weight: 600; letter-spacing: 1px; }
+    input[type="number"] { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-weight: 600; letter-spacing: 1px; }
 
     /* Cards & Glassmorphism */
     .card {
@@ -205,7 +204,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     .stat-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-    .stat-row strong { font-family: 'Inter', monospace; font-size: 18px; font-weight: 700; }
+    .stat-row strong { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 18px; font-weight: 700; }
 
     /* Ledger Table (Modern Premium Style) */
     .ledger-container { margin-bottom: 24px; }
@@ -228,7 +227,7 @@
     .tx-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); }
     .tx-mid { display: flex; justify-content: space-between; align-items: center; }
     .tx-type { font-weight: 700; font-size: 16px; color: var(--text-main); }
-    .tx-amount { font-family: 'Inter', monospace; font-weight: 700; font-size: 18px; }
+    .tx-amount { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-weight: 700; font-size: 18px; }
     .tx-bot { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 4px; }
     .tx-bal { color: var(--text-muted); }
     .tx-note { color: #cbd5e1; font-style: italic; }
@@ -540,7 +539,7 @@
 
     function getTodayStr() {
       const d = new Date();
-      return \`\${d.getFullYear()}-\${String(d.getMonth()+1).padStart(2,'0')}-\${String(d.getDate()).padStart(2,'0')}\`;
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
     function formatTime(timestamp) {
@@ -549,7 +548,7 @@
       const m = String(d.getMinutes()).padStart(2,'0');
       const ampm = h >= 12 ? 'PM' : 'AM';
       h = h % 12 || 12; 
-      return \`\${h}:\${m} \${ampm}\`;
+      return `${h}:${m} ${ampm}`;
     }
 
     // --- Core Logic ---
@@ -597,8 +596,8 @@
       document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
       document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
       
-      const viewEl = document.getElementById(\`view-\${viewName}\`);
-      const navEl = document.getElementById(\`nav-\${viewName}\`);
+      const viewEl = document.getElementById(`view-${viewName}`);
+      const navEl = document.getElementById(`nav-${viewName}`);
       if(viewEl) viewEl.classList.remove('hidden');
       if(navEl) navEl.classList.add('active');
       state.currentView = viewName;
@@ -635,9 +634,9 @@
     // --- Modals ---
     function openTransactionModal(network) {
       document.getElementById('tx-network').value = network;
-      document.getElementById('tx-modal-title').innerText = \`Add \${network.toUpperCase()} Transaction\`;
+      document.getElementById('tx-modal-title').innerText = `Add ${network.toUpperCase()} Transaction`;
       const btn = document.getElementById('tx-submit-btn');
-      btn.className = \`btn btn-primary \${network}\`;
+      btn.className = `btn btn-primary ${network}`;
       
       document.getElementById('tx-type').value = '';
       document.getElementById('tx-amount').value = '';
@@ -683,7 +682,7 @@
       state[network].float += floatChange;
       state.cash += cashChange;
 
-      document.getElementById(\`input-\${network}-float\`).value = state[network].float;
+      document.getElementById(`input-${network}-float`).value = state[network].float;
       document.getElementById('input-cash').value = state.cash;
       updateBalancesDisplay();
 
@@ -715,7 +714,7 @@
         return;
       }
 
-      if (!confirm(\`Delete \${tx.type} of \${formatMoney(tx.amount)} UGX?\`)) return;
+      if (!confirm(`Delete ${tx.type} of ${formatMoney(tx.amount)} UGX?`)) return;
 
       let floatChange = 0;
       let cashChange = 0;
@@ -738,7 +737,7 @@
         }
       }
 
-      document.getElementById(\`input-\${network}-float\`).value = state[network].float;
+      document.getElementById(`input-${network}-float`).value = state[network].float;
       document.getElementById('input-cash').value = state.cash;
       updateBalancesDisplay();
 
@@ -755,29 +754,29 @@
     }
 
     function renderList(txs, network) {
-      if (txs.length === 0) return \`<div class="text-center mt-2 mb-2" style="color:var(--text-muted);">No transactions yet.</div>\`;
+      if (txs.length === 0) return `<div class="text-center mt-2 mb-2" style="color:var(--text-muted);">No transactions yet.</div>`;
       
-      let html = \`<div>\`;
+      let html = `<div>`;
       txs.forEach(tx => {
         const colorCls = getTxColorClass(tx.type);
-        const delClick = tx.locked ? '' : \`onclick="deleteTransaction('\${tx.id}', '\${network}')"\`;
+        const delClick = tx.locked ? '' : `onclick="deleteTransaction('${tx.id}', '${network}')"`;
         const cursor = tx.locked ? '' : 'cursor:pointer;';
         
-        html += \`
-          <div class="tx-item" \${delClick} style="\${cursor}">
+        html += `
+          <div class="tx-item" ${delClick} style="${cursor}">
             <div class="tx-top">
-              <span>\${formatTime(tx.timestamp)}</span>
-              <span class="tx-bal">Bal: \${formatMoney(tx.floatAfter)}</span>
+              <span>${formatTime(tx.timestamp)}</span>
+              <span class="tx-bal">Bal: ${formatMoney(tx.floatAfter)}</span>
             </div>
             <div class="tx-mid">
-              <span class="tx-type \${colorCls}">\${tx.type}</span>
-              <span class="tx-amount \${colorCls}">\${formatMoney(tx.amount)}</span>
+              <span class="tx-type ${colorCls}">${tx.type}</span>
+              <span class="tx-amount ${colorCls}">${formatMoney(tx.amount)}</span>
             </div>
-            \${tx.note ? \`<div class="tx-bot"><span class="tx-note">"\${tx.note}"</span></div>\` : ''}
+            ${tx.note ? `<div class="tx-bot"><span class="tx-note">"${tx.note}"</span></div>` : ''}
           </div>
-        \`;
+        `;
       });
-      html += \`</div>\`;
+      html += `</div>`;
       return html;
     }
 
@@ -788,20 +787,20 @@
         const todayTxs = netTxs.filter(t => t.dateStr === today);
         const pastTxs = netTxs.filter(t => t.dateStr !== today);
 
-        const todayContainer = document.getElementById(\`\${network}-today-container\`);
+        const todayContainer = document.getElementById(`${network}-today-container`);
         if(todayContainer) {
-          todayContainer.innerHTML = \`
+          todayContainer.innerHTML = `
             <div class="card mt-2">
               <div class="card-title">
-                <span>Today (\${today})</span>
-                <span style="font-family: monospace;">Bal: \${formatMoney(state[network].float)}</span>
+                <span>Today (${today})</span>
+                <span style="font-family: monospace;">Bal: ${formatMoney(state[network].float)}</span>
               </div>
-              \${renderList(todayTxs, network)}
+              ${renderList(todayTxs, network)}
             </div>
-          \`;
+          `;
         }
 
-        const historyContainer = document.getElementById(\`\${network}-history-container\`);
+        const historyContainer = document.getElementById(`${network}-history-container`);
         if(historyContainer) {
           if (pastTxs.length === 0) {
             historyContainer.innerHTML = '';
@@ -814,22 +813,22 @@
             grouped[t.dateStr].push(t);
           });
 
-          let histHtml = \`<div class="card-title mt-2">Past Days</div>\`;
+          let histHtml = `<div class="card-title mt-2">Past Days</div>`;
           
           Object.keys(grouped).sort().reverse().forEach(date => {
             const dayTxs = grouped[date];
             const count = dayTxs.length;
             const endBal = dayTxs[0].floatAfter;
             
-            histHtml += \`
+            histHtml += `
               <button class="collapsible" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block';">
-                <span>\${date}</span>
-                <span>\${count} txs | Bal: \${formatMoney(endBal)}</span>
+                <span>${date}</span>
+                <span>${count} txs | Bal: ${formatMoney(endBal)}</span>
               </button>
               <div class="content-collapse">
-                \${renderList(dayTxs, network)}
+                ${renderList(dayTxs, network)}
               </div>
-            \`;
+            `;
           });
           historyContainer.innerHTML = histHtml;
         }
