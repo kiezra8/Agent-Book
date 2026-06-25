@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" id="theme-color" content="#E30613">
+  <title>AgentBook Premium</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --airtel-color: #ff3b30;
+      --airtel-glow: rgba(255, 59, 48, 0.3);
+      --mtn-color: #ffcc00;
+      --mtn-glow: rgba(255, 204, 0, 0.3);
+      --bg-dark: #0f172a;
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --nav-height: 70px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-size: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header */
+    header {
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      transition: all 0.4s ease;
+      z-index: 10;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--glass-border);
+      letter-spacing: 0.5px;
+    }
+    
+    header.airtel { color: var(--airtel-color); text-shadow: 0 0 15px var(--airtel-glow); }
+    header.mtn { color: var(--mtn-color); text-shadow: 0 0 15px var(--mtn-glow); }
+    header.neutral { color: var(--text-main); }
+
+    /* Main Content */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      padding-bottom: calc(var(--nav-height) + 20px);
+      scroll-behavior: smooth;
+    }
+
+    /* Bottom Nav */
+    nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: var(--nav-height);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid var(--glass-border);
+      z-index: 100;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .nav-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      font-size: 11px;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-btn .icon {
+      font-size: 22px;
+      margin-bottom: 4px;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-btn:active .icon { transform: scale(0.9); }
+
+    .nav-btn.active { color: var(--text-main); font-weight: 700; }
+    .nav-btn.active.airtel-nav { color: var(--airtel-color); }
+    .nav-btn.active.mtn-nav { color: var(--mtn-color); }
+    .nav-btn.active .icon { transform: translateY(-3px); }
+
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .btn-primary.airtel { 
+      background: linear-gradient(135deg, #ff3b30, #d9261c); 
+      color: #fff; 
+      box-shadow: 0 4px 15px var(--airtel-glow);
+    }
+    .btn-primary.mtn { 
+      background: linear-gradient(135deg, #ffcc00, #e6b800); 
+      color: #000; 
+      box-shadow: 0 4px 15px var(--mtn-glow);
+    }
+    .btn-secondary { background: var(--glass-bg); color: var(--text-main); border: 1px solid var(--glass-border); }
+    .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
+
+    .btn:active { transform: translateY(2px); box-shadow: none; }
+
+    /* Forms & Inputs */
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    input[type="number"], input[type="text"], select {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      color: var(--text-main);
+      transition: border-color 0.3s ease;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--mtn-color);
+    }
+    input[type="number"] { font-family: 'Inter', monospace; font-weight: 600; letter-spacing: 1px; }
+
+    /* Cards & Glassmorphism */
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      animation: fadeIn 0.4s ease forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--text-main);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 15px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .stat-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+    .stat-row strong { font-family: 'Inter', monospace; font-size: 18px; font-weight: 700; }
+
+    /* Ledger Table (Modern Premium Style) */
+    .ledger-container { margin-bottom: 24px; }
+    
+    .tx-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.2s ease, background 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .tx-item:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
+    
+    .tx-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); }
+    .tx-mid { display: flex; justify-content: space-between; align-items: center; }
+    .tx-type { font-weight: 700; font-size: 16px; color: var(--text-main); }
+    .tx-amount { font-family: 'Inter', monospace; font-weight: 700; font-size: 18px; }
+    .tx-bot { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 4px; }
+    .tx-bal { color: var(--text-muted); }
+    .tx-note { color: #cbd5e1; font-style: italic; }
+
+    /* Colors for transaction types */
+    .color-in { color: var(--success) !important; }
+    .color-out { color: var(--danger) !important; }
+    .color-float { color: #38bdf8 !important; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .modal-overlay.active { display: flex; animation: fadeBg 0.3s forwards; }
+    
+    @keyframes fadeBg { from{opacity:0;} to{opacity:1;} }
+    @keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+    
+    .modal-content {
+      background: var(--bg-dark);
+      width: 100%;
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+      border-top: 1px solid var(--glass-border);
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .modal-header { font-size: 22px; font-weight: 700; margin-bottom: 24px; text-align: center; }
+
+    /* Collapsible */
+    .collapsible {
+      background: var(--glass-bg);
+      color: var(--text-main);
+      cursor: pointer;
+      padding: 16px;
+      width: 100%;
+      border: 1px solid var(--glass-border);
+      text-align: left;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      transition: background 0.3s;
+    }
+    .collapsible:hover { background: rgba(255,255,255,0.1); }
+    .content-collapse { padding: 0 4px; display: none; margin-bottom: 16px; }
+
+    /* Utilities */
+    .hidden { display: none !important; }
+    .text-center { text-align: center; }
+    .mt-1 { margin-top: 8px; }
+    .mt-2 { margin-top: 16px; }
+    .mb-1 { margin-bottom: 8px; }
+    .mb-2 { margin-bottom: 16px; }
+    .flex { display: flex; }
+    .gap-2 { gap: 16px; }
+    .text-success { color: var(--success); }
+
+    /* Toggle Switch */
+    .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
+      background-color: white; transition: .4s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--success); }
+    input:checked + .slider:before { transform: translateX(22px); }
+
+    .toggle-group {
+      display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 24px;
+    }
+    .toggle-btn {
+      flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-muted);
+      font-size: 14px; font-weight: 600; border-radius: 8px; transition: all 0.3s;
+    }
+    .toggle-btn.active { background: var(--glass-bg); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body>
+
+  <header id="main-header" class="airtel">AgentBook</header>
+
+  <main id="main-content">
+    <!-- Airtel Book -->
+    <section id="view-airtel" class="view">
+      <button class="btn btn-primary airtel" onclick="openTransactionModal('airtel')">+ Add Airtel Transaction</button>
+      <div id="airtel-today-container"></div>
+      <div id="airtel-history-container" class="mt-2"></div>
+    </section>
+
+    <!-- MTN Book -->
+    <section id="view-mtn" class="view hidden">
+      <button class="btn btn-primary mtn" onclick="openTransactionModal('mtn')">+ Add MTN Transaction</button>
+      <div id="mtn-today-container"></div>
+      <div id="mtn-history-container" class="mt-2"></div>
+    </section>
+
+    <!-- Float & Cash -->
+    <section id="view-float" class="view hidden">
+      <div class="card">
+        <div class="card-title">Current Balances</div>
+        <div class="form-group" id="group-airtel-float">
+          <label>Airtel Float (UGX)</label>
+          <input type="number" id="input-airtel-float" onchange="updateBalances()">
+        </div>
+        <div class="form-group" id="group-mtn-float">
+          <label>MTN Float (UGX)</label>
+          <input type="number" id="input-mtn-float" onchange="updateBalances()">
+        </div>
+        <div class="form-group">
+          <label>Cash on Hand (UGX)</label>
+          <input type="number" id="input-cash" onchange="updateBalances()">
+        </div>
+        <div class="stat-row mt-2" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
+          <span>Total Business Value:</span>
+          <strong id="display-total-value" style="font-size: 22px; color: var(--mtn-color)">0</strong>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="alert('Balances updated!')">Save Balances</button>
+    </section>
+
+    <!-- Summary -->
+    <section id="view-summary" class="view hidden">
+      <div class="toggle-group">
+        <button class="toggle-btn active" onclick="setSummaryRange('today', this)">Today</button>
+        <button class="toggle-btn" onclick="setSummaryRange('week', this)">This Week</button>
+        <button class="toggle-btn" onclick="setSummaryRange('month', this)">This Month</button>
+      </div>
+
+      <div class="card" id="summary-airtel-card">
+        <div class="card-title" style="color: var(--airtel-color)">Airtel Summary</div>
+        <div class="stat-row"><span>Total Cash In:</span> <strong id="sum-airtel-in" class="color-in">0</strong></div>
+        <div class="stat-row"><span>Total Cash Out:</span> <strong id="sum-airtel-out" class="color-out">0</strong></div>
+        <div class="stat-row"><span>Transactions:</span> <strong id="sum-airtel-count">0</strong></div>
+        <div class="stat-row"><span>Est. Commission:</span> <strong id="sum-airtel-comm" class="text-success">0</strong></div>
+      </div>
+
+      <div class="card" id="summary-mtn-card">
+        <div class="card-title" style="color: var(--mtn-color)">MTN Summary</div>
+        <div class="stat-row"><span>Total Cash In:</span> <strong id="sum-mtn-in" class="color-in">0</strong></div>
+        <div class="stat-row"><span>Total Cash Out:</span> <strong id="sum-mtn-out" class="color-out">0</strong></div>
+        <div class="stat-row"><span>Transactions:</span> <strong id="sum-mtn-count">0</strong></div>
+        <div class="stat-row"><span>Est. Commission:</span> <strong id="sum-mtn-comm" class="text-success">0</strong></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Combined Total</div>
+        <div class="stat-row"><span>Total Cash In:</span> <strong id="sum-total-in" class="color-in">0</strong></div>
+        <div class="stat-row"><span>Total Cash Out:</span> <strong id="sum-total-out" class="color-out">0</strong></div>
+        <div class="stat-row"><span>Total Commission:</span> <strong id="sum-total-comm" class="text-success">0</strong></div>
+      </div>
+
+      <button class="btn btn-danger" onclick="endOfDay()">End of Day (Lock Today)</button>
+    </section>
+
+    <!-- Settings -->
+    <section id="view-settings" class="view hidden">
+      <div class="card">
+        <div class="card-title">Agent Profile</div>
+        <div class="form-group">
+          <label>Agent Name</label>
+          <input type="text" id="setting-agent-name" onchange="saveSettings()" placeholder="Enter your name">
+        </div>
+        <div class="form-group">
+          <label>Shop Name</label>
+          <input type="text" id="setting-shop-name" onchange="saveSettings()" placeholder="Enter shop name">
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Networks Enabled</div>
+        <div class="stat-row">
+          <span>Airtel Money</span>
+          <label class="switch">
+            <input type="checkbox" id="setting-use-airtel" onchange="saveSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="stat-row">
+          <span>MTN MoMo</span>
+          <label class="switch">
+            <input type="checkbox" id="setting-use-mtn" onchange="saveSettings()">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="exportData()">Export Backup (JSON)</button>
+      <button class="btn btn-danger" onclick="clearAllData()">Wipe All Data</button>
+    </section>
+
+  </main>
+
+  <nav id="bottom-nav">
+    <button class="nav-btn active airtel-nav" id="nav-airtel" onclick="switchView('airtel')">
+      <div class="icon">🔴</div>Airtel
+    </button>
+    <button class="nav-btn mtn-nav" id="nav-mtn" onclick="switchView('mtn')">
+      <div class="icon">🟡</div>MTN
+    </button>
+    <button class="nav-btn" id="nav-float" onclick="switchView('float')">
+      <div class="icon">💰</div>Float
+    </button>
+    <button class="nav-btn" id="nav-summary" onclick="switchView('summary')">
+      <div class="icon">📊</div>Stats
+    </button>
+    <button class="nav-btn" id="nav-settings" onclick="switchView('settings')">
+      <div class="icon">⚙️</div>Settings
+    </button>
+  </nav>
+
+  <!-- Transaction Modal -->
+  <div class="modal-overlay" id="tx-modal">
+    <div class="modal-content">
+      <div class="modal-header" id="tx-modal-title">Add Transaction</div>
+      <form id="tx-form" onsubmit="saveTransaction(event)">
+        <input type="hidden" id="tx-network">
+        <div class="form-group">
+          <label>Transaction Type</label>
+          <select id="tx-type" required>
+            <option value="" disabled selected>Select type...</option>
+            <option value="Cash In">Cash In (Deposit)</option>
+            <option value="Cash Out">Cash Out (Withdraw)</option>
+            <option value="Airtime">Airtime</option>
+            <option value="Bundle">Data Bundle</option>
+            <option value="Deposit Float">Top-up Float</option>
+            <option value="Withdraw Float">Reduce Float</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount (UGX)</label>
+          <input type="number" id="tx-amount" min="1" step="1" required placeholder="e.g. 50000">
+        </div>
+        <div class="form-group">
+          <label>Note / Customer Name (Optional)</label>
+          <input type="text" id="tx-note" placeholder="Name or number">
+        </div>
+        <div class="flex gap-2">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('tx-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="tx-submit-btn">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- State Management ---
+    const STORAGE_KEY = 'agentbook_data';
+    
+    let state = {
+      settings: {
+        agentName: '',
+        shopName: '',
+        useAirtel: true,
+        useMtn: true
+      },
+      airtel: { float: 0 },
+      mtn: { float: 0 },
+      cash: 0,
+      transactions: [],
+      currentView: 'airtel',
+      summaryRange: 'today'
+    };
+
+    function init() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed, settings: { ...state.settings, ...(parsed.settings || {}) } };
+        } catch(e) {}
+      }
+      
+      document.getElementById('setting-agent-name').value = state.settings.agentName || '';
+      document.getElementById('setting-shop-name').value = state.settings.shopName || '';
+      document.getElementById('setting-use-airtel').checked = state.settings.useAirtel;
+      document.getElementById('setting-use-mtn').checked = state.settings.useMtn;
+      
+      document.getElementById('input-airtel-float').value = state.airtel.float || 0;
+      document.getElementById('input-mtn-float').value = state.mtn.float || 0;
+      document.getElementById('input-cash').value = state.cash || 0;
+
+      applySettings();
+      switchView(state.settings.useAirtel ? 'airtel' : (state.settings.useMtn ? 'mtn' : 'float'));
+      updateBalancesDisplay();
+    }
+
+    function persist() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    // --- Helpers ---
+    function formatMoney(amount) {
+      return new Intl.NumberFormat('en-UG').format(Math.round(amount));
+    }
+
+    function getTodayStr() {
+      const d = new Date();
+      return \`\${d.getFullYear()}-\${String(d.getMonth()+1).padStart(2,'0')}-\${String(d.getDate()).padStart(2,'0')}\`;
+    }
+
+    function formatTime(timestamp) {
+      const d = new Date(timestamp);
+      let h = d.getHours();
+      const m = String(d.getMinutes()).padStart(2,'0');
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12; 
+      return \`\${h}:\${m} \${ampm}\`;
+    }
+
+    // --- Core Logic ---
+    function applySettings() {
+      const a = state.settings.useAirtel;
+      const m = state.settings.useMtn;
+      
+      document.getElementById('nav-airtel').style.display = a ? 'flex' : 'none';
+      document.getElementById('group-airtel-float').style.display = a ? 'block' : 'none';
+      document.getElementById('summary-airtel-card').style.display = a ? 'block' : 'none';
+      
+      document.getElementById('nav-mtn').style.display = m ? 'flex' : 'none';
+      document.getElementById('group-mtn-float').style.display = m ? 'block' : 'none';
+      document.getElementById('summary-mtn-card').style.display = m ? 'block' : 'none';
+
+      if (!a && state.currentView === 'airtel') switchView(m ? 'mtn' : 'float');
+      if (!m && state.currentView === 'mtn') switchView('float');
+    }
+
+    function saveSettings() {
+      state.settings.agentName = document.getElementById('setting-agent-name').value;
+      state.settings.shopName = document.getElementById('setting-shop-name').value;
+      state.settings.useAirtel = document.getElementById('setting-use-airtel').checked;
+      state.settings.useMtn = document.getElementById('setting-use-mtn').checked;
+      persist();
+      applySettings();
+    }
+
+    function updateBalances() {
+      state.airtel.float = parseInt(document.getElementById('input-airtel-float').value) || 0;
+      state.mtn.float = parseInt(document.getElementById('input-mtn-float').value) || 0;
+      state.cash = parseInt(document.getElementById('input-cash').value) || 0;
+      persist();
+      updateBalancesDisplay();
+      renderBooks();
+    }
+
+    function updateBalancesDisplay() {
+      const total = state.airtel.float + state.mtn.float + state.cash;
+      document.getElementById('display-total-value').innerText = formatMoney(total);
+    }
+
+    // --- UI Navigation ---
+    function switchView(viewName) {
+      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      
+      const viewEl = document.getElementById(\`view-\${viewName}\`);
+      const navEl = document.getElementById(\`nav-\${viewName}\`);
+      if(viewEl) viewEl.classList.remove('hidden');
+      if(navEl) navEl.classList.add('active');
+      state.currentView = viewName;
+
+      const header = document.getElementById('main-header');
+      const themeColor = document.getElementById('theme-color');
+      
+      if (viewName === 'airtel') {
+        header.className = 'airtel';
+        header.innerText = 'Airtel Book';
+        themeColor.content = '#ff3b30';
+        renderBooks();
+      } else if (viewName === 'mtn') {
+        header.className = 'mtn';
+        header.innerText = 'MTN Book';
+        themeColor.content = '#ffcc00';
+        renderBooks();
+      } else if (viewName === 'float') {
+        header.className = 'neutral';
+        header.innerText = 'Float & Cash';
+        themeColor.content = '#0f172a';
+      } else if (viewName === 'summary') {
+        header.className = 'neutral';
+        header.innerText = 'Analytics';
+        themeColor.content = '#0f172a';
+        updateSummary();
+      } else if (viewName === 'settings') {
+        header.className = 'neutral';
+        header.innerText = 'Settings';
+        themeColor.content = '#0f172a';
+      }
+    }
+
+    // --- Modals ---
+    function openTransactionModal(network) {
+      document.getElementById('tx-network').value = network;
+      document.getElementById('tx-modal-title').innerText = \`Add \${network.toUpperCase()} Transaction\`;
+      const btn = document.getElementById('tx-submit-btn');
+      btn.className = \`btn btn-primary \${network}\`;
+      
+      document.getElementById('tx-type').value = '';
+      document.getElementById('tx-amount').value = '';
+      document.getElementById('tx-note').value = '';
+      
+      document.getElementById('tx-modal').classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // --- Transactions ---
+    function saveTransaction(e) {
+      e.preventDefault();
+      const network = document.getElementById('tx-network').value;
+      const type = document.getElementById('tx-type').value;
+      const amount = parseInt(document.getElementById('tx-amount').value);
+      const note = document.getElementById('tx-note').value;
+      
+      if (!type || isNaN(amount) || amount <= 0) return;
+
+      let floatChange = 0;
+      let cashChange = 0;
+
+      if (type === 'Cash In') {
+        floatChange = -amount;
+        cashChange = amount;
+      } else if (type === 'Cash Out') {
+        floatChange = amount;
+        cashChange = -amount;
+      } else if (type === 'Airtime' || type === 'Bundle') {
+        floatChange = -amount;
+        cashChange = amount;
+      } else if (type === 'Deposit Float') {
+        floatChange = amount;
+        cashChange = -amount;
+      } else if (type === 'Withdraw Float') {
+        floatChange = -amount;
+        cashChange = amount;
+      }
+
+      state[network].float += floatChange;
+      state.cash += cashChange;
+
+      document.getElementById(\`input-\${network}-float\`).value = state[network].float;
+      document.getElementById('input-cash').value = state.cash;
+      updateBalancesDisplay();
+
+      const tx = {
+        id: Date.now().toString(),
+        network,
+        type,
+        amount,
+        note,
+        floatAfter: state[network].float,
+        timestamp: Date.now(),
+        dateStr: getTodayStr(),
+        locked: false
+      };
+
+      state.transactions.unshift(tx);
+      persist();
+      closeModal('tx-modal');
+      renderBooks();
+    }
+
+    function deleteTransaction(id, network) {
+      const txIndex = state.transactions.findIndex(t => t.id === id);
+      if (txIndex === -1) return;
+      const tx = state.transactions[txIndex];
+      
+      if (tx.locked) {
+        alert("Cannot delete locked transactions from previous days.");
+        return;
+      }
+
+      if (!confirm(\`Delete \${tx.type} of \${formatMoney(tx.amount)} UGX?\`)) return;
+
+      let floatChange = 0;
+      let cashChange = 0;
+      const amount = tx.amount;
+
+      if (['Cash In', 'Airtime', 'Bundle', 'Withdraw Float'].includes(tx.type)) {
+        floatChange = amount;
+        cashChange = -amount;
+      } else if (['Cash Out', 'Deposit Float'].includes(tx.type)) {
+        floatChange = -amount;
+        cashChange = amount;
+      }
+
+      state[network].float += floatChange;
+      state.cash += cashChange;
+
+      for (let i = 0; i < txIndex; i++) {
+        if (state.transactions[i].network === network) {
+          state.transactions[i].floatAfter += floatChange;
+        }
+      }
+
+      document.getElementById(\`input-\${network}-float\`).value = state[network].float;
+      document.getElementById('input-cash').value = state.cash;
+      updateBalancesDisplay();
+
+      state.transactions.splice(txIndex, 1);
+      persist();
+      renderBooks();
+    }
+
+    // --- Rendering Books ---
+    function getTxColorClass(type) {
+      if (['Cash In', 'Airtime', 'Bundle'].includes(type)) return 'color-in';
+      if (type === 'Cash Out') return 'color-out';
+      return 'color-float';
+    }
+
+    function renderList(txs, network) {
+      if (txs.length === 0) return \`<div class="text-center mt-2 mb-2" style="color:var(--text-muted);">No transactions yet.</div>\`;
+      
+      let html = \`<div>\`;
+      txs.forEach(tx => {
+        const colorCls = getTxColorClass(tx.type);
+        const delClick = tx.locked ? '' : \`onclick="deleteTransaction('\${tx.id}', '\${network}')"\`;
+        const cursor = tx.locked ? '' : 'cursor:pointer;';
+        
+        html += \`
+          <div class="tx-item" \${delClick} style="\${cursor}">
+            <div class="tx-top">
+              <span>\${formatTime(tx.timestamp)}</span>
+              <span class="tx-bal">Bal: \${formatMoney(tx.floatAfter)}</span>
+            </div>
+            <div class="tx-mid">
+              <span class="tx-type \${colorCls}">\${tx.type}</span>
+              <span class="tx-amount \${colorCls}">\${formatMoney(tx.amount)}</span>
+            </div>
+            \${tx.note ? \`<div class="tx-bot"><span class="tx-note">"\${tx.note}"</span></div>\` : ''}
+          </div>
+        \`;
+      });
+      html += \`</div>\`;
+      return html;
+    }
+
+    function renderBooks() {
+      const today = getTodayStr();
+      ['airtel', 'mtn'].forEach(network => {
+        const netTxs = state.transactions.filter(t => t.network === network);
+        const todayTxs = netTxs.filter(t => t.dateStr === today);
+        const pastTxs = netTxs.filter(t => t.dateStr !== today);
+
+        const todayContainer = document.getElementById(\`\${network}-today-container\`);
+        if(todayContainer) {
+          todayContainer.innerHTML = \`
+            <div class="card mt-2">
+              <div class="card-title">
+                <span>Today (\${today})</span>
+                <span style="font-family: monospace;">Bal: \${formatMoney(state[network].float)}</span>
+              </div>
+              \${renderList(todayTxs, network)}
+            </div>
+          \`;
+        }
+
+        const historyContainer = document.getElementById(\`\${network}-history-container\`);
+        if(historyContainer) {
+          if (pastTxs.length === 0) {
+            historyContainer.innerHTML = '';
+            return;
+          }
+
+          const grouped = {};
+          pastTxs.forEach(t => {
+            if (!grouped[t.dateStr]) grouped[t.dateStr] = [];
+            grouped[t.dateStr].push(t);
+          });
+
+          let histHtml = \`<div class="card-title mt-2">Past Days</div>\`;
+          
+          Object.keys(grouped).sort().reverse().forEach(date => {
+            const dayTxs = grouped[date];
+            const count = dayTxs.length;
+            const endBal = dayTxs[0].floatAfter;
+            
+            histHtml += \`
+              <button class="collapsible" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block';">
+                <span>\${date}</span>
+                <span>\${count} txs | Bal: \${formatMoney(endBal)}</span>
+              </button>
+              <div class="content-collapse">
+                \${renderList(dayTxs, network)}
+              </div>
+            \`;
+          });
+          historyContainer.innerHTML = histHtml;
+        }
+      });
+    }
+
+    // --- Summary ---
+    function setSummaryRange(range, btnElement) {
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btnElement.classList.add('active');
+      state.summaryRange = range;
+      updateSummary();
+    }
+
+    function isDateInRange(dateStr, range) {
+      if (range === 'today') return dateStr === getTodayStr();
+      const d = new Date(dateStr);
+      const now = new Date();
+      if (range === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      if (range === 'week') {
+        const pastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return d >= pastWeek;
+      }
+      return true;
+    }
+
+    function calculateStats(networkTxs) {
+      let cashIn = 0, cashOut = 0;
+      networkTxs.forEach(tx => {
+        if (tx.type === 'Cash In') cashIn += tx.amount;
+        if (tx.type === 'Cash Out') cashOut += tx.amount;
+      });
+      const comm = (cashIn * 0.006) + (cashOut * 0.006);
+      return { count: networkTxs.length, in: cashIn, out: cashOut, comm: comm };
+    }
+
+    function updateSummary() {
+      const filtered = state.transactions.filter(t => isDateInRange(t.dateStr, state.summaryRange));
+      const airtelStats = calculateStats(filtered.filter(t => t.network === 'airtel'));
+      const mtnStats = calculateStats(filtered.filter(t => t.network === 'mtn'));
+
+      document.getElementById('sum-airtel-in').innerText = formatMoney(airtelStats.in);
+      document.getElementById('sum-airtel-out').innerText = formatMoney(airtelStats.out);
+      document.getElementById('sum-airtel-count').innerText = airtelStats.count;
+      document.getElementById('sum-airtel-comm').innerText = formatMoney(airtelStats.comm);
+
+      document.getElementById('sum-mtn-in').innerText = formatMoney(mtnStats.in);
+      document.getElementById('sum-mtn-out').innerText = formatMoney(mtnStats.out);
+      document.getElementById('sum-mtn-count').innerText = mtnStats.count;
+      document.getElementById('sum-mtn-comm').innerText = formatMoney(mtnStats.comm);
+
+      document.getElementById('sum-total-in').innerText = formatMoney(airtelStats.in + mtnStats.in);
+      document.getElementById('sum-total-out').innerText = formatMoney(airtelStats.out + mtnStats.out);
+      document.getElementById('sum-total-comm').innerText = formatMoney(airtelStats.comm + mtnStats.comm);
+    }
+
+    function endOfDay() {
+      if (!confirm("This will lock today's transactions so they cannot be edited. Continue?")) return;
+      const today = getTodayStr();
+      state.transactions.forEach(t => { if (t.dateStr === today) t.locked = true; });
+      persist();
+      alert("Day ended successfully. Transactions locked.");
+      renderBooks();
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = "agentbook_backup_" + getTodayStr() + ".json";
+      document.body.appendChild(a); 
+      a.click();
+      a.remove();
+    }
+
+    function clearAllData() {
+      if(confirm("DANGER! This will delete ALL transactions permanently. Are you absolutely sure?")) {
+        if(confirm("Really clear all data? This cannot be undone.")) {
+          localStorage.removeItem(STORAGE_KEY);
+          location.reload();
+        }
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
