@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agentbook-v3';
+const CACHE_NAME = 'agentbook-v4';
 const ASSETS = [
   './',
   './index.html',
