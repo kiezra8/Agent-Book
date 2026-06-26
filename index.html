@@ -273,13 +273,18 @@
 
     /* Log Book Table */
     .logbook-wrap {
-      overflow-x: auto;
       border: 2px solid;
       border-radius: 0 0 12px 12px;
       margin-bottom: 20px;
+      overflow: hidden;
     }
     .logbook-wrap.airtel-wrap { border-color: var(--airtel-color); }
     .logbook-wrap.mtn-wrap { border-color: var(--mtn-color); }
+
+    /* Hide these columns on mobile to prevent sideways scrolling */
+    @media (max-width: 600px) {
+      .col-hide { display: none !important; }
+    }
 
     .logbook-table {
       width: 100%;
@@ -942,7 +947,7 @@
     }
 
     // Build the log-book table HTML for an array of transactions
-    function renderLogbookTable(txs, network, startSN, showDate) {
+    function renderLogbookTable(txs, network, startSN) {
       const cls = network === 'airtel' ? 'airtel-wrap' : 'mtn-wrap';
       const theadCls = network === 'airtel' ? 'airtel-thead' : 'mtn-thead';
 
@@ -951,13 +956,13 @@
           <table class="logbook-table">
             <thead class="${theadCls}">
               <tr>
-                <th>S/N</th>
+                <th class="col-hide">S/N</th>
                 <th>DATE</th>
                 <th>CUSTOMER NO.</th>
                 <th>NAME</th>
-                <th>TRANS. TYPE</th>
+                <th>TYPE</th>
                 <th>AMOUNT</th>
-                <th>DESCRIPTION</th>
+                <th class="col-hide">NOTE</th>
                 <th>E.B</th>
               </tr>
             </thead>
@@ -972,16 +977,15 @@
         [...txs].reverse().forEach(tx => {
           const colorCls = getTxColorClass(tx.type);
           const delAttr = tx.locked ? '' : `onclick="deleteTransaction('${tx.id}','${network}')" class="deletable-row"`;
-          const dateDisplay = showDate ? tx.dateStr : formatTime(tx.timestamp);
           html += `
             <tr ${delAttr} title="${tx.locked ? 'Locked' : 'Tap to delete'}">
-              <td class="sn-cell">${sn++}</td>
-              <td class="date-cell">${dateDisplay}</td>
+              <td class="sn-cell col-hide">${sn++}</td>
+              <td class="date-cell">${tx.dateStr}</td>
               <td class="wrap-cell">${tx.customerNo || '—'}</td>
               <td class="wrap-cell">${tx.note || '—'}</td>
               <td><span class="${colorCls}" style="font-weight:700">${tx.type}</span></td>
               <td class="amount-cell ${colorCls}">${formatMoney(tx.amount)}</td>
-              <td class="wrap-cell" style="color:var(--text-muted);font-style:italic">${tx.description || '—'}</td>
+              <td class="wrap-cell col-hide" style="color:var(--text-muted);font-style:italic">${tx.description || '—'}</td>
               <td class="bal-cell">${formatMoney(tx.floatAfter)}</td>
             </tr>
           `;
@@ -1004,7 +1008,7 @@
           todayContainer.innerHTML = `
             <div style="margin-top:16px;">
               ${renderLogbookHeader(network)}
-              ${renderLogbookTable(todayTxs, network, 1, false)}
+              ${renderLogbookTable(todayTxs, network, 1)}
             </div>
           `;
         }
@@ -1035,7 +1039,7 @@
                 <span>${count} txs | Bal: ${formatMoney(endBal)}</span>
               </button>
               <div class="content-collapse">
-                ${renderLogbookTable(dayTxs, network, 1, true)}
+                ${renderLogbookTable(dayTxs, network, 1)}
               </div>
             `;
           });
