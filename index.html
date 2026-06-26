@@ -842,7 +842,11 @@
       document.getElementById('tx-amount').value = '';
       document.getElementById('tx-note').value = '';
       
-      document.getElementById('tx-modal').classList.add('active');
+      openModal('tx-modal');
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
     }
 
     function closeModal(id) {
