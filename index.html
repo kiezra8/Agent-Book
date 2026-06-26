@@ -209,36 +209,147 @@
     .stat-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
     .stat-row strong { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 18px; font-weight: 700; }
 
-    /* Ledger Table (Modern Premium Style) */
-    .ledger-container { margin-bottom: 24px; }
-    
-    .tx-item {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      transition: transform 0.2s ease, background 0.2s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    .tx-item:active { transform: scale(0.98); background: rgba(255,255,255,0.08); }
-    
-    .tx-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-muted); }
-    .tx-mid { display: flex; justify-content: space-between; align-items: center; }
-    .tx-type { font-weight: 700; font-size: 16px; color: var(--text-main); }
-    .tx-amount { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-weight: 700; font-size: 18px; }
-    .tx-bot { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-top: 4px; }
-    .tx-bal { color: var(--text-muted); }
-    .tx-note { color: #cbd5e1; font-style: italic; }
+    /* =============================================
+       LOG BOOK TABLE STYLES
+       ============================================= */
 
     /* Colors for transaction types */
     .color-in { color: var(--success) !important; }
     .color-out { color: var(--danger) !important; }
     .color-float { color: #38bdf8 !important; }
+
+    /* Branded Log Book Header */
+    .logbook-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      margin-bottom: 0;
+      border-radius: 12px 12px 0 0;
+      border: 2px solid;
+      border-bottom: none;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .logbook-header.airtel-header {
+      background: linear-gradient(135deg, #1a0000 0%, #2d0505 100%);
+      border-color: var(--airtel-color);
+      color: var(--airtel-color);
+    }
+    .logbook-header.mtn-header {
+      background: linear-gradient(135deg, #1a1400 0%, #2d2500 100%);
+      border-color: var(--mtn-color);
+      color: var(--mtn-color);
+    }
+    .logbook-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+    .logbook-logo.airtel-logo { background: var(--airtel-color); color: #fff; }
+    .logbook-logo.mtn-logo { background: var(--mtn-color); color: #000; }
+    .logbook-title-block { flex: 1; }
+    .logbook-title-block .brand-name {
+      font-size: 11px;
+      font-weight: 700;
+      opacity: 0.7;
+      letter-spacing: 2px;
+    }
+    .logbook-title-block .book-title {
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      line-height: 1.2;
+    }
+
+    /* Log Book Table */
+    .logbook-wrap {
+      overflow-x: auto;
+      border: 2px solid;
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 20px;
+    }
+    .logbook-wrap.airtel-wrap { border-color: var(--airtel-color); }
+    .logbook-wrap.mtn-wrap { border-color: var(--mtn-color); }
+
+    .logbook-table {
+      width: 100%;
+      min-width: 580px;
+      border-collapse: collapse;
+      font-size: 11.5px;
+    }
+    .logbook-table thead tr {
+      text-transform: uppercase;
+      font-size: 9.5px;
+      letter-spacing: 0.5px;
+      font-weight: 800;
+    }
+    .logbook-table thead.airtel-thead { background: rgba(255,59,48,0.18); color: var(--airtel-color); }
+    .logbook-table thead.mtn-thead { background: rgba(255,204,0,0.15); color: var(--mtn-color); }
+
+    .logbook-table th, .logbook-table td {
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 7px 8px;
+      text-align: left;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .logbook-table td.wrap-cell { white-space: normal; word-break: break-word; min-width: 70px; }
+
+    .logbook-table tbody tr {
+      transition: background 0.15s ease;
+    }
+    .logbook-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
+    .logbook-table tbody tr:hover { background: rgba(255,255,255,0.07); }
+    .logbook-table tbody tr.deletable-row { cursor: pointer; }
+
+    .logbook-table td.sn-cell { 
+      color: var(--text-muted); 
+      font-size: 10px; 
+      text-align: center;
+      width: 28px;
+    }
+    .logbook-table td.date-cell { font-size: 10px; color: var(--text-muted); }
+    .logbook-table td.amount-cell { 
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-weight: 700; 
+      text-align: right;
+    }
+    .logbook-table td.bal-cell {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 10.5px;
+      color: #94a3b8;
+      text-align: right;
+    }
+
+    .logbook-empty {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-style: italic;
+    }
+
+    /* Section day separator */
+    .day-section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 6px 8px 4px;
+      background: rgba(255,255,255,0.03);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
 
     /* Modals */
     .modal-overlay {
@@ -478,8 +589,16 @@
           <input type="number" id="tx-amount" min="1" step="1" required placeholder="e.g. 50000">
         </div>
         <div class="form-group">
-          <label>Note / Customer Name (Optional)</label>
-          <input type="text" id="tx-note" placeholder="Name or number">
+          <label>Customer's Phone Number</label>
+          <input type="text" id="tx-customer-no" placeholder="e.g. 0712345678" inputmode="tel">
+        </div>
+        <div class="form-group">
+          <label>Customer Name (Optional)</label>
+          <input type="text" id="tx-note" placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+          <label>Description / Note (Optional)</label>
+          <input type="text" id="tx-description" placeholder="e.g. school fees, rent...">
         </div>
         <div class="flex gap-2">
           <button type="button" class="btn btn-secondary" onclick="closeModal('tx-modal')">Cancel</button>
@@ -659,6 +778,8 @@
       const type = document.getElementById('tx-type').value;
       const amount = parseInt(document.getElementById('tx-amount').value);
       const note = document.getElementById('tx-note').value;
+      const customerNo = document.getElementById('tx-customer-no').value.trim();
+      const description = document.getElementById('tx-description').value.trim();
       
       if (!type || isNaN(amount) || amount <= 0) return;
 
@@ -695,6 +816,8 @@
         type,
         amount,
         note,
+        customerNo,
+        description,
         floatAfter: state[network].float,
         timestamp: Date.now(),
         dateStr: getTodayStr(),
@@ -704,6 +827,9 @@
       state.transactions.unshift(tx);
       persist();
       closeModal('tx-modal');
+      // Reset new fields
+      document.getElementById('tx-customer-no').value = '';
+      document.getElementById('tx-description').value = '';
       renderBooks();
     }
 
@@ -756,30 +882,73 @@
       return 'color-float';
     }
 
-    function renderList(txs, network) {
-      if (txs.length === 0) return `<div class="text-center mt-2 mb-2" style="color:var(--text-muted);">No transactions yet.</div>`;
-      
-      let html = `<div>`;
-      txs.forEach(tx => {
-        const colorCls = getTxColorClass(tx.type);
-        const delClick = tx.locked ? '' : `onclick="deleteTransaction('${tx.id}', '${network}')"`;
-        const cursor = tx.locked ? '' : 'cursor:pointer;';
-        
-        html += `
-          <div class="tx-item" ${delClick} style="${cursor}">
-            <div class="tx-top">
-              <span>${formatTime(tx.timestamp)}</span>
-              <span class="tx-bal">Bal: ${formatMoney(tx.floatAfter)}</span>
-            </div>
-            <div class="tx-mid">
-              <span class="tx-type ${colorCls}">${tx.type}</span>
-              <span class="tx-amount ${colorCls}">${formatMoney(tx.amount)}</span>
-            </div>
-            ${tx.note ? `<div class="tx-bot"><span class="tx-note">"${tx.note}"</span></div>` : ''}
+    // Build the branded log-book header HTML
+    function renderLogbookHeader(network) {
+      const isAirtel = network === 'airtel';
+      const cls = isAirtel ? 'airtel-header' : 'mtn-header';
+      const logoCls = isAirtel ? 'airtel-logo' : 'mtn-logo';
+      const emoji = isAirtel ? 'A' : 'M';
+      const brandName = isAirtel ? 'AIRTEL MONEY' : 'MTN MOBILE MONEY';
+      return `
+        <div class="logbook-header ${cls}">
+          <div class="logbook-logo ${logoCls}">${emoji}</div>
+          <div class="logbook-title-block">
+            <div class="brand-name">${brandName}</div>
+            <div class="book-title">Agent Transaction Log Book</div>
           </div>
-        `;
-      });
-      html += `</div>`;
+          <div class="logbook-logo ${logoCls}">${emoji}</div>
+        </div>
+      `;
+    }
+
+    // Build the log-book table HTML for an array of transactions
+    function renderLogbookTable(txs, network, startSN, showDate) {
+      const cls = network === 'airtel' ? 'airtel-wrap' : 'mtn-wrap';
+      const theadCls = network === 'airtel' ? 'airtel-thead' : 'mtn-thead';
+
+      let html = `
+        <div class="logbook-wrap ${cls}">
+          <table class="logbook-table">
+            <thead class="${theadCls}">
+              <tr>
+                <th>S/N</th>
+                <th>DATE</th>
+                <th>CUSTOMER NO.</th>
+                <th>NAME</th>
+                <th>TRANS. TYPE</th>
+                <th>AMOUNT</th>
+                <th>DESCRIPTION</th>
+                <th>E.B</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      if (txs.length === 0) {
+        html += `<tr><td colspan="8" class="logbook-empty">No transactions recorded yet.</td></tr>`;
+      } else {
+        let sn = startSN || 1;
+        // txs are newest-first; show oldest-first in table (reverse)
+        [...txs].reverse().forEach(tx => {
+          const colorCls = getTxColorClass(tx.type);
+          const delAttr = tx.locked ? '' : `onclick="deleteTransaction('${tx.id}','${network}')" class="deletable-row"`;
+          const dateDisplay = showDate ? tx.dateStr : formatTime(tx.timestamp);
+          html += `
+            <tr ${delAttr} title="${tx.locked ? 'Locked' : 'Tap to delete'}">
+              <td class="sn-cell">${sn++}</td>
+              <td class="date-cell">${dateDisplay}</td>
+              <td class="wrap-cell">${tx.customerNo || '—'}</td>
+              <td class="wrap-cell">${tx.note || '—'}</td>
+              <td><span class="${colorCls}" style="font-weight:700">${tx.type}</span></td>
+              <td class="amount-cell ${colorCls}">${formatMoney(tx.amount)}</td>
+              <td class="wrap-cell" style="color:var(--text-muted);font-style:italic">${tx.description || '—'}</td>
+              <td class="bal-cell">${formatMoney(tx.floatAfter)}</td>
+            </tr>
+          `;
+        });
+      }
+
+      html += `</tbody></table></div>`;
       return html;
     }
 
@@ -793,12 +962,9 @@
         const todayContainer = document.getElementById(`${network}-today-container`);
         if(todayContainer) {
           todayContainer.innerHTML = `
-            <div class="card mt-2">
-              <div class="card-title">
-                <span>Today (${today})</span>
-                <span style="font-family: monospace;">Bal: ${formatMoney(state[network].float)}</span>
-              </div>
-              ${renderList(todayTxs, network)}
+            <div style="margin-top:16px;">
+              ${renderLogbookHeader(network)}
+              ${renderLogbookTable(todayTxs, network, 1, false)}
             </div>
           `;
         }
@@ -816,7 +982,7 @@
             grouped[t.dateStr].push(t);
           });
 
-          let histHtml = `<div class="card-title mt-2">Past Days</div>`;
+          let histHtml = `<div class="card-title mt-2" style="margin-top:24px;">Past Days</div>`;
           
           Object.keys(grouped).sort().reverse().forEach(date => {
             const dayTxs = grouped[date];
@@ -829,12 +995,14 @@
                 <span>${count} txs | Bal: ${formatMoney(endBal)}</span>
               </button>
               <div class="content-collapse">
-                ${renderList(dayTxs, network)}
+                ${renderLogbookTable(dayTxs, network, 1, true)}
               </div>
             `;
           });
           historyContainer.innerHTML = histHtml;
         }
+      });
+    }
       });
     }
 
