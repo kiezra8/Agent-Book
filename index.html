@@ -277,64 +277,20 @@
       border-radius: 0 0 12px 12px;
       margin-bottom: 20px;
       overflow: hidden;
+      width: 100%;
     }
     .logbook-wrap.airtel-wrap { border-color: var(--airtel-color); }
     .logbook-wrap.mtn-wrap { border-color: var(--mtn-color); }
 
-    /* Hide these columns on mobile to prevent sideways scrolling */
-    @media (max-width: 600px) {
-      .col-hide { display: none !important; }
-    }
-
     .logbook-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11.5px;
-    }
-
-    /* Mobile Responsive optimizations to prevent horizontal scrolling */
-    @media (max-width: 600px) {
-      main {
-        padding: 10px;
-        padding-bottom: calc(var(--nav-height) + 10px);
-      }
-      .card {
-        padding: 14px;
-        margin-bottom: 12px;
-      }
-      .btn {
-        padding: 12px;
-        font-size: 14px;
-        margin-bottom: 12px;
-      }
-      .logbook-table {
-        font-size: 9px;
-      }
-      .logbook-table thead tr {
-        font-size: 7.5px;
-        letter-spacing: 0px;
-      }
-      .logbook-table th, .logbook-table td {
-        padding: 5px 3px;
-      }
-      .logbook-table td.wrap-cell {
-        min-width: unset;
-      }
-      .logbook-table td.sn-cell {
-        width: 16px;
-        font-size: 8px;
-        padding: 5px 1px;
-      }
-      .logbook-table td.date-cell {
-        font-size: 8px;
-      }
-      .logbook-table td.amount-cell, .logbook-table td.bal-cell {
-        font-size: 8.5px;
-      }
+      table-layout: fixed;
+      font-size: 12px;
     }
     .logbook-table thead tr {
       text-transform: uppercase;
-      font-size: 9.5px;
+      font-size: 10px;
       letter-spacing: 0.5px;
       font-weight: 800;
     }
@@ -343,57 +299,74 @@
 
     .logbook-table th, .logbook-table td {
       border: 1px solid rgba(255,255,255,0.08);
-      padding: 7px 8px;
+      padding: 8px 6px;
       text-align: left;
       vertical-align: middle;
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .logbook-table td.wrap-cell { white-space: normal; word-break: break-word; min-width: 70px; }
-
-    .logbook-table tbody tr {
-      transition: background 0.15s ease;
-    }
+    .logbook-table tbody tr { transition: background 0.15s ease; }
     .logbook-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
     .logbook-table tbody tr:hover { background: rgba(255,255,255,0.07); }
     .logbook-table tbody tr.deletable-row { cursor: pointer; }
 
-    .logbook-table td.sn-cell { 
-      color: var(--text-muted); 
-      font-size: 10px; 
-      text-align: center;
-      width: 28px;
-    }
-    .logbook-table td.date-cell { font-size: 10px; color: var(--text-muted); }
-    .logbook-table td.amount-cell { 
+    .logbook-table td.time-cell  { font-size: 11px; color: var(--text-muted); width: 60px; }
+    .logbook-table td.sn-cell   { color: var(--text-muted); font-size: 10px; text-align: center; width: 24px; }
+    .logbook-table td.amount-cell {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-weight: 700; 
+      font-weight: 700;
       text-align: right;
     }
     .logbook-table td.bal-cell {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 10.5px;
+      font-size: 11px;
       color: #94a3b8;
       text-align: right;
+      width: 70px;
     }
 
     .logbook-empty {
       text-align: center;
-      padding: 32px 16px;
+      padding: 28px 16px;
       color: var(--text-muted);
       font-size: 13px;
       font-style: italic;
     }
 
-    /* Section day separator */
-    .day-section-label {
-      font-size: 11px;
+    /* Past days section header */
+    .past-days-title {
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       color: var(--text-muted);
-      padding: 6px 8px 4px;
-      background: rgba(255,255,255,0.03);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      margin: 24px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--glass-border);
+    }
+
+    /* ===== MOBILE: hide non-essential columns so 5 fit without scrolling ===== */
+    /* Columns hidden on phones: S/N, CUSTOMER NO., NOTE */
+    @media (max-width: 767px) {
+      .col-mobile-hide { display: none !important; }
+      main {
+        padding: 10px;
+        padding-bottom: calc(var(--nav-height) + 10px);
+      }
+      .logbook-table { font-size: 10.5px; }
+      .logbook-table thead tr { font-size: 9px; }
+      .logbook-table th, .logbook-table td { padding: 7px 4px; }
+      .logbook-table td.time-cell  { width: 54px; font-size: 10px; }
+      .logbook-table td.bal-cell   { width: 62px; font-size: 10px; }
+      .logbook-table td.amount-cell { font-size: 10.5px; }
+    }
+    /* Extra small phones (< 380px) */
+    @media (max-width: 379px) {
+      .logbook-table { font-size: 9.5px; }
+      .logbook-table th, .logbook-table td { padding: 6px 3px; }
+      .logbook-table td.time-cell  { width: 48px; }
+      .logbook-table td.bal-cell   { width: 56px; }
     }
 
     /* Modals */
@@ -947,6 +920,8 @@
     }
 
     // Build the log-book table HTML for an array of transactions
+    // Visible on ALL phones (5 cols): TIME | NAME | TYPE | AMOUNT | E.B
+    // Hidden on mobile (col-mobile-hide): S/N only
     function renderLogbookTable(txs, network, startSN) {
       const cls = network === 'airtel' ? 'airtel-wrap' : 'mtn-wrap';
       const theadCls = network === 'airtel' ? 'airtel-thead' : 'mtn-thead';
@@ -956,13 +931,12 @@
           <table class="logbook-table">
             <thead class="${theadCls}">
               <tr>
-                <th class="col-hide">S/N</th>
-                <th>DATE</th>
-                <th>CUSTOMER NO.</th>
+                <th class="col-mobile-hide">S/N</th>
+                <th>TIME</th>
+                <th>CUST. NO.</th>
                 <th>NAME</th>
                 <th>TYPE</th>
                 <th>AMOUNT</th>
-                <th class="col-hide">NOTE</th>
                 <th>E.B</th>
               </tr>
             </thead>
@@ -970,22 +944,22 @@
       `;
 
       if (txs.length === 0) {
-        html += `<tr><td colspan="8" class="logbook-empty">No transactions recorded yet.</td></tr>`;
+        html += `<tr><td colspan="7" class="logbook-empty">No transactions recorded yet.</td></tr>`;
       } else {
         let sn = startSN || 1;
         // txs are newest-first; show oldest-first in table (reverse)
         [...txs].reverse().forEach(tx => {
           const colorCls = getTxColorClass(tx.type);
           const delAttr = tx.locked ? '' : `onclick="deleteTransaction('${tx.id}','${network}')" class="deletable-row"`;
+          const displayName = tx.note || tx.description || '—';
           html += `
             <tr ${delAttr} title="${tx.locked ? 'Locked' : 'Tap to delete'}">
-              <td class="sn-cell col-hide">${sn++}</td>
-              <td class="date-cell">${tx.dateStr}</td>
-              <td class="wrap-cell">${tx.customerNo || '—'}</td>
-              <td class="wrap-cell">${tx.note || '—'}</td>
-              <td><span class="${colorCls}" style="font-weight:700">${tx.type}</span></td>
+              <td class="sn-cell col-mobile-hide">${sn++}</td>
+              <td class="time-cell">${formatTime(tx.timestamp)}</td>
+              <td style="overflow:hidden;text-overflow:ellipsis;">${tx.customerNo || '—'}</td>
+              <td style="overflow:hidden;text-overflow:ellipsis;">${displayName}</td>
+              <td><span class="${colorCls}" style="font-weight:700;">${tx.type}</span></td>
               <td class="amount-cell ${colorCls}">${formatMoney(tx.amount)}</td>
-              <td class="wrap-cell col-hide" style="color:var(--text-muted);font-style:italic">${tx.description || '—'}</td>
               <td class="bal-cell">${formatMoney(tx.floatAfter)}</td>
             </tr>
           `;
@@ -1026,7 +1000,7 @@
             grouped[t.dateStr].push(t);
           });
 
-          let histHtml = `<div class="card-title mt-2" style="margin-top:24px;">Past Days</div>`;
+          let histHtml = `<div class="past-days-title">📅 Previous Transactions by Date</div>`;
           
           Object.keys(grouped).sort().reverse().forEach(date => {
             const dayTxs = grouped[date];
