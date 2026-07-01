@@ -67,7 +67,7 @@
       flex: 1;
       overflow-y: auto;
       padding: 20px;
-      padding-bottom: calc(var(--nav-height) + 20px);
+      padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 40px);
       scroll-behavior: smooth;
     }
 
@@ -154,7 +154,7 @@
       font-weight: 500;
       color: var(--text-muted);
     }
-    input[type="number"], input[type="text"], select {
+    input[type="number"], input[type="text"], input[type="date"], select {
       width: 100%;
       padding: 14px;
       font-size: 16px;
@@ -163,8 +163,9 @@
       border-radius: 10px;
       color: var(--text-main);
       transition: border-color 0.3s ease;
+      color-scheme: dark;
     }
-    input:focus, select:focus {
+    input:focus, select:focus, input[type="date"]:focus {
       outline: none;
       border-color: var(--mtn-color);
     }
@@ -352,7 +353,7 @@
       .col-mobile-hide { display: none !important; }
       main {
         padding: 10px;
-        padding-bottom: calc(var(--nav-height) + 10px);
+        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 40px);
       }
       .logbook-table { font-size: 10.5px; }
       .logbook-table thead tr { font-size: 9px; }
@@ -462,7 +463,7 @@
     <section id="view-airtel" class="view">
       <div class="form-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
         <label style="margin-bottom: 0; white-space: nowrap; font-weight: 700; color: var(--airtel-color);">History Date:</label>
-        <input type="date" id="airtel-date-picker" onchange="renderBooks()" style="padding: 10px; font-size: 14px; flex: 1;">
+        <input type="date" id="airtel-date-picker" onchange="renderBooks()" style="flex: 1; padding: 10px; border-radius: 8px;">
       </div>
       <button class="btn btn-primary airtel" onclick="openTransactionModal('airtel')">+ Add Airtel Transaction</button>
       <div id="airtel-today-container"></div>
@@ -473,7 +474,7 @@
     <section id="view-mtn" class="view hidden">
       <div class="form-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
         <label style="margin-bottom: 0; white-space: nowrap; font-weight: 700; color: var(--mtn-color);">History Date:</label>
-        <input type="date" id="mtn-date-picker" onchange="renderBooks()" style="padding: 10px; font-size: 14px; flex: 1;">
+        <input type="date" id="mtn-date-picker" onchange="renderBooks()" style="flex: 1; padding: 10px; border-radius: 8px;">
       </div>
       <button class="btn btn-primary mtn" onclick="openTransactionModal('mtn')">+ Add MTN Transaction</button>
       <div id="mtn-today-container"></div>
