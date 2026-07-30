@@ -1,1293 +1,894 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AgentBook Premium</title>
-  <meta name="theme-color" id="theme-color" content="#ff3b30">
+  <title>AgentOS — Mobile Money Agent Business Operating System</title>
+  <meta name="description" content="Offline-first Mobile Money Operating System for roadside agents, SACCOs, bank agents, and super agents across Africa.">
+  <meta name="theme-color" content="#0b0f19">
   <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <style>
-    :root {
-      --airtel-color: #ff3b30;
-      --airtel-glow: rgba(255, 59, 48, 0.3);
-      --mtn-color: #ffcc00;
-      --mtn-glow: rgba(255, 204, 0, 0.3);
-      --bg-dark: #0f172a;
-      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      --glass-bg: rgba(255, 255, 255, 0.05);
-      --glass-border: rgba(255, 255, 255, 0.1);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --danger: #ef4444;
-      --success: #22c55e;
-      --nav-height: 70px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background: var(--bg-gradient);
-      background-attachment: fixed;
-      color: var(--text-main);
-      font-size: 16px;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* Header */
-    header {
-      padding: 20px;
-      font-size: 24px;
-      font-weight: 700;
-      text-align: center;
-      transition: all 0.4s ease;
-      z-index: 10;
-      background: var(--glass-bg);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--glass-border);
-      letter-spacing: 0.5px;
-    }
-    
-    header.airtel { color: var(--airtel-color); text-shadow: 0 0 15px var(--airtel-glow); }
-    header.mtn { color: var(--mtn-color); text-shadow: 0 0 15px var(--mtn-glow); }
-    header.neutral { color: var(--text-main); }
-
-    /* Main Content */
-    main {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 40px);
-      scroll-behavior: smooth;
-    }
-
-    /* Bottom Nav */
-    nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: var(--nav-height);
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(16px);
-      display: flex;
-      justify-content: space-around;
-      border-top: 1px solid var(--glass-border);
-      z-index: 100;
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-
-    .nav-btn {
-      flex: 1;
-      background: none;
-      border: none;
-      font-size: 11px;
-      font-weight: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .nav-btn .icon {
-      font-size: 22px;
-      margin-bottom: 4px;
-      transition: transform 0.3s ease;
-    }
-
-    .nav-btn:active .icon { transform: scale(0.9); }
-
-    .nav-btn.active { color: var(--text-main); font-weight: 700; }
-    .nav-btn.active.airtel-nav { color: var(--airtel-color); }
-    .nav-btn.active.mtn-nav { color: var(--mtn-color); }
-    .nav-btn.active .icon { transform: translateY(-3px); }
-
-    /* Buttons */
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    
-    .btn-primary.airtel { 
-      background: linear-gradient(135deg, #ff3b30, #d9261c); 
-      color: #fff; 
-      box-shadow: 0 4px 15px var(--airtel-glow);
-    }
-    .btn-primary.mtn { 
-      background: linear-gradient(135deg, #ffcc00, #e6b800); 
-      color: #000; 
-      box-shadow: 0 4px 15px var(--mtn-glow);
-    }
-    .btn-secondary { background: var(--glass-bg); color: var(--text-main); border: 1px solid var(--glass-border); }
-    .btn-danger { background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff; box-shadow: 0 4px 15px rgba(239,68,68,0.3); }
-
-    .btn:active { transform: translateY(2px); box-shadow: none; }
-
-    /* Forms & Inputs */
-    .form-group { margin-bottom: 20px; }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-    input[type="number"], input[type="text"], input[type="date"], select {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      background: rgba(0,0,0,0.2);
-      border: 1px solid var(--glass-border);
-      border-radius: 10px;
-      color: var(--text-main);
-      transition: border-color 0.3s ease;
-      color-scheme: dark;
-    }
-    input:focus, select:focus, input[type="date"]:focus {
-      outline: none;
-      border-color: var(--mtn-color);
-    }
-    input[type="number"] { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-weight: 600; letter-spacing: 1px; }
-
-    /* Cards & Glassmorphism */
-    .card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-      animation: fadeIn 0.4s ease forwards;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card-title {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 16px;
-      color: var(--text-main);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      font-size: 15px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .stat-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-    .stat-row strong { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 18px; font-weight: 700; }
-
-    /* =============================================
-       LOG BOOK TABLE STYLES
-       ============================================= */
-
-    /* Colors for transaction types */
-    .color-in { color: var(--success) !important; }
-    .color-out { color: var(--danger) !important; }
-    .color-float { color: #38bdf8 !important; }
-
-    /* Branded Log Book Header */
-    .logbook-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 12px;
-      margin-bottom: 0;
-      border-radius: 12px 12px 0 0;
-      border: 2px solid;
-      border-bottom: none;
-      font-weight: 800;
-      font-size: 14px;
-      letter-spacing: 0.5px;
-      text-align: center;
-      text-transform: uppercase;
-    }
-    .logbook-header.airtel-header {
-      background: linear-gradient(135deg, #1a0000 0%, #2d0505 100%);
-      border-color: var(--airtel-color);
-      color: var(--airtel-color);
-    }
-    .logbook-header.mtn-header {
-      background: linear-gradient(135deg, #1a1400 0%, #2d2500 100%);
-      border-color: var(--mtn-color);
-      color: var(--mtn-color);
-    }
-    .logbook-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      font-weight: 900;
-      flex-shrink: 0;
-    }
-    .logbook-logo.airtel-logo { background: var(--airtel-color); color: #fff; }
-    .logbook-logo.mtn-logo { background: var(--mtn-color); color: #000; }
-    .logbook-title-block { flex: 1; }
-    .logbook-title-block .brand-name {
-      font-size: 11px;
-      font-weight: 700;
-      opacity: 0.7;
-      letter-spacing: 2px;
-    }
-    .logbook-title-block .book-title {
-      font-size: 15px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      line-height: 1.2;
-    }
-
-    /* Log Book Table */
-    .logbook-wrap {
-      border: 2px solid;
-      border-radius: 0 0 12px 12px;
-      margin-bottom: 20px;
-      overflow: hidden;
-      width: 100%;
-    }
-    .logbook-wrap.airtel-wrap { border-color: var(--airtel-color); }
-    .logbook-wrap.mtn-wrap { border-color: var(--mtn-color); }
-
-    .logbook-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-      font-size: 12px;
-    }
-    .logbook-table thead tr {
-      text-transform: uppercase;
-      font-size: 10px;
-      letter-spacing: 0.5px;
-      font-weight: 800;
-    }
-    .logbook-table thead.airtel-thead { background: rgba(255,59,48,0.18); color: var(--airtel-color); }
-    .logbook-table thead.mtn-thead { background: rgba(255,204,0,0.15); color: var(--mtn-color); }
-
-    .logbook-table th, .logbook-table td {
-      border: 1px solid rgba(255,255,255,0.08);
-      padding: 8px 6px;
-      text-align: left;
-      vertical-align: middle;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .logbook-table tbody tr { transition: background 0.15s ease; }
-    .logbook-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
-    .logbook-table tbody tr:hover { background: rgba(255,255,255,0.07); }
-    .logbook-table tbody tr.deletable-row { cursor: pointer; }
-
-    .logbook-table td.time-cell  { font-size: 11px; color: var(--text-muted); width: 60px; }
-    .logbook-table td.sn-cell   { color: var(--text-muted); font-size: 10px; text-align: center; width: 24px; }
-    .logbook-table td.amount-cell {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-weight: 700;
-      text-align: right;
-    }
-    .logbook-table td.bal-cell {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 11px;
-      color: #94a3b8;
-      text-align: right;
-      width: 70px;
-    }
-
-    .logbook-empty {
-      text-align: center;
-      padding: 28px 16px;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    /* Past days section header */
-    .past-days-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin: 24px 0 10px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--glass-border);
-    }
-
-    /* ===== MOBILE: hide non-essential columns so 5 fit without scrolling ===== */
-    /* Columns hidden on phones: S/N, CUSTOMER NO., NOTE */
-    @media (max-width: 767px) {
-      .col-mobile-hide { display: none !important; }
-      main {
-        padding: 10px;
-        padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 40px);
-      }
-      .logbook-table { font-size: 10.5px; }
-      .logbook-table thead tr { font-size: 9px; }
-      .logbook-table th, .logbook-table td { padding: 7px 4px; }
-      .logbook-table td.time-cell  { width: 54px; font-size: 10px; }
-      .logbook-table td.bal-cell   { width: 62px; font-size: 10px; }
-      .logbook-table td.amount-cell { font-size: 10.5px; }
-    }
-    /* Extra small phones (< 380px) */
-    @media (max-width: 379px) {
-      .logbook-table { font-size: 9.5px; }
-      .logbook-table th, .logbook-table td { padding: 6px 3px; }
-      .logbook-table td.time-cell  { width: 48px; }
-      .logbook-table td.bal-cell   { width: 56px; }
-    }
-
-    /* Modals */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
-      backdrop-filter: blur(5px);
-      z-index: 1000;
-      display: none;
-      justify-content: center;
-      align-items: flex-end;
-    }
-    .modal-overlay.active { display: flex; animation: fadeBg 0.3s forwards; }
-    
-    @keyframes fadeBg { from{opacity:0;} to{opacity:1;} }
-    @keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
-    
-    .modal-content {
-      background: var(--bg-dark);
-      width: 100%;
-      border-radius: 24px 24px 0 0;
-      padding: 24px;
-      border-top: 1px solid var(--glass-border);
-      max-height: 90vh;
-      overflow-y: auto;
-      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .modal-header { font-size: 22px; font-weight: 700; margin-bottom: 24px; text-align: center; }
-
-    /* Collapsible */
-    .collapsible {
-      background: var(--glass-bg);
-      color: var(--text-main);
-      cursor: pointer;
-      padding: 16px;
-      width: 100%;
-      border: 1px solid var(--glass-border);
-      text-align: left;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 12px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      transition: background 0.3s;
-    }
-    .collapsible:hover { background: rgba(255,255,255,0.1); }
-    .content-collapse { padding: 0 4px; display: none; margin-bottom: 16px; }
-
-    /* Utilities */
-    .hidden { display: none !important; }
-    .text-center { text-align: center; }
-    .mt-1 { margin-top: 8px; }
-    .mt-2 { margin-top: 16px; }
-    .mb-1 { margin-bottom: 8px; }
-    .mb-2 { margin-bottom: 16px; }
-    .flex { display: flex; }
-    .gap-2 { gap: 16px; }
-    .text-success { color: var(--success); }
-
-    /* Toggle Switch */
-    .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider {
-      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px;
-    }
-    .slider:before {
-      position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px;
-      background-color: white; transition: .4s; border-radius: 50%;
-    }
-    input:checked + .slider { background-color: var(--success); }
-    input:checked + .slider:before { transform: translateX(22px); }
-
-    .toggle-group {
-      display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 24px;
-    }
-    .toggle-btn {
-      flex: 1; padding: 12px; background: transparent; border: none; color: var(--text-muted);
-      font-size: 14px; font-weight: 600; border-radius: 8px; transition: all 0.3s;
-    }
-    .toggle-btn.active { background: var(--glass-bg); color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <header id="main-header" class="airtel">AgentBook</header>
-
-  <main id="main-content">
-    <!-- Airtel Book -->
-    <section id="view-airtel" class="view">
-      <div class="form-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
-        <label style="margin-bottom: 0; white-space: nowrap; font-weight: 700; color: var(--airtel-color);">History Date:</label>
-        <input type="date" id="airtel-date-picker" onchange="renderBooks()" style="flex: 1; padding: 10px; border-radius: 8px;">
-      </div>
-      <button class="btn btn-primary airtel" onclick="openTransactionModal('airtel')">+ Add Airtel Transaction</button>
-      <div id="airtel-today-container"></div>
-      <div id="airtel-history-container" class="mt-2"></div>
-    </section>
-
-    <!-- MTN Book -->
-    <section id="view-mtn" class="view hidden">
-      <div class="form-group" style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
-        <label style="margin-bottom: 0; white-space: nowrap; font-weight: 700; color: var(--mtn-color);">History Date:</label>
-        <input type="date" id="mtn-date-picker" onchange="renderBooks()" style="flex: 1; padding: 10px; border-radius: 8px;">
-      </div>
-      <button class="btn btn-primary mtn" onclick="openTransactionModal('mtn')">+ Add MTN Transaction</button>
-      <div id="mtn-today-container"></div>
-      <div id="mtn-history-container" class="mt-2"></div>
-    </section>
-
-    <!-- Float & Cash -->
-    <section id="view-float" class="view hidden">
-      <div class="card">
-        <div class="card-title">Current Balances</div>
-        <div class="form-group" id="group-airtel-float">
-          <label>Airtel Float (UGX)</label>
-          <input type="number" id="input-airtel-float" onchange="updateBalances()">
+  <!-- App Header Bar -->
+  <header class="app-header">
+    <div class="brand-container">
+      <div class="brand-logo">A</div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="brand-title">AgentOS</span>
         </div>
-        <div class="form-group" id="group-mtn-float">
-          <label>MTN Float (UGX)</label>
-          <input type="number" id="input-mtn-float" onchange="updateBalances()">
-        </div>
-        <div class="form-group">
-          <label>Cash on Hand (UGX)</label>
-          <input type="number" id="input-cash" onchange="updateBalances()">
-        </div>
-        <div class="stat-row mt-2" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px;">
-          <span>Total Business Value:</span>
-          <strong id="display-total-value" style="font-size: 22px; color: var(--mtn-color)">0</strong>
-        </div>
+        <span style="font-size: 10px; color: var(--text-muted);">Mobile Money Business System</span>
       </div>
-      <button class="btn btn-secondary" onclick="alert('Balances updated!')">Save Balances</button>
-    </section>
+    </div>
 
-    <!-- Summary -->
-    <section id="view-summary" class="view hidden">
-      <div class="toggle-group">
-        <button class="toggle-btn active" onclick="setSummaryRange('today', this)">Today</button>
-        <button class="toggle-btn" onclick="setSummaryRange('week', this)">This Week</button>
-        <button class="toggle-btn" onclick="setSummaryRange('month', this)">This Month</button>
+    <div class="header-controls">
+      <!-- Branch Switcher -->
+      <select id="branchSelect" class="branch-select" onchange="AgentOS.switchBranch(this.value)">
+        <option value="Kampala Central (Main)">📍 Kampala Central (Main)</option>
+        <option value="Entebbe Road Branch">📍 Entebbe Road Branch</option>
+        <option value="Jinja Kiosk 01">📍 Jinja Kiosk 01</option>
+      </select>
+
+      <!-- Platform Mode Switcher Toggle (Computer vs Phone) -->
+      <div class="mode-switcher">
+        <button id="modeBtnComputer" class="mode-btn active" onclick="AgentOS.setPlatformMode('computer')">
+          💻 Computer Dashboard
+        </button>
+        <button id="modeBtnPhone" class="mode-btn" onclick="AgentOS.setPlatformMode('phone')">
+          📱 Phone App View
+        </button>
       </div>
 
-      <div class="card" id="summary-airtel-card">
-        <div class="card-title" style="color: var(--airtel-color)">Airtel Summary</div>
-        <div class="stat-row"><span>Total Cash In:</span> <strong id="sum-airtel-in" class="color-in">0</strong></div>
-        <div class="stat-row"><span>Total Cash Out:</span> <strong id="sum-airtel-out" class="color-out">0</strong></div>
-        <div class="stat-row"><span>Transactions:</span> <strong id="sum-airtel-count">0</strong></div>
-        <div class="stat-row"><span>Est. Commission:</span> <strong id="sum-airtel-comm" class="text-success">0</strong></div>
-      </div>
+      <!-- Theme Switcher -->
+      <button class="icon-btn" onclick="AgentOS.toggleTheme()" title="Toggle Theme">
+        <span id="themeIcon">☀️</span>
+      </button>
 
-      <div class="card" id="summary-mtn-card">
-        <div class="card-title" style="color: var(--mtn-color)">MTN Summary</div>
-        <div class="stat-row"><span>Total Cash In:</span> <strong id="sum-mtn-in" class="color-in">0</strong></div>
-        <div class="stat-row"><span>Total Cash Out:</span> <strong id="sum-mtn-out" class="color-out">0</strong></div>
-        <div class="stat-row"><span>Transactions:</span> <strong id="sum-mtn-count">0</strong></div>
-        <div class="stat-row"><span>Est. Commission:</span> <strong id="sum-mtn-comm" class="text-success">0</strong></div>
-      </div>
+      <!-- Lock / Biometric Button -->
+      <button class="icon-btn" onclick="AgentOS.lockScreen()" title="Lock App">
+        🔒
+      </button>
+    </div>
+  </header>
 
-      <div class="card">
-        <div class="card-title">Combined Total</div>
-        <div class="stat-row"><span>Total Cash In:</span> <strong id="sum-total-in" class="color-in">0</strong></div>
-        <div class="stat-row"><span>Total Cash Out:</span> <strong id="sum-total-out" class="color-out">0</strong></div>
-        <div class="stat-row"><span>Total Commission:</span> <strong id="sum-total-comm" class="text-success">0</strong></div>
-      </div>
+  <!-- Workspace Container -->
+  <div class="app-workspace">
+    
+    <!-- Computer Layout Sidebar -->
+    <aside id="desktopSidebar" class="desktop-sidebar">
+      <div class="nav-group-title">Core Operations</div>
+      <a class="sidebar-item active" onclick="AgentOS.navigateTo('dashboard')" id="nav-dashboard">
+        <span class="icon">📊</span> Dashboard
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('ledgers')" id="nav-ledgers">
+        <span class="icon">📖</span> Digital Agent Book <span class="count-pill" id="nav-line-count">4 Lines</span>
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('transactions')" id="nav-transactions">
+        <span class="icon">💸</span> All Records
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('closing')" id="nav-closing">
+        <span class="icon">📑</span> Daily Closing
+      </a>
 
-      <button class="btn btn-danger" onclick="endOfDay()">End of Day (Lock Today)</button>
-    </section>
+      <div class="nav-group-title">Float & Inventory</div>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('float')" id="nav-float">
+        <span class="icon">⚡</span> Float Management
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('expenses')" id="nav-expenses">
+        <span class="icon">🧾</span> Expenses
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('inventory')" id="nav-inventory">
+        <span class="icon">📦</span> Stock & Inventory
+      </a>
 
-    <!-- Settings -->
-    <section id="view-settings" class="view hidden">
-      <div class="card">
-        <div class="card-title">Agent Profile</div>
-        <div class="form-group">
-          <label>Agent Name</label>
-          <input type="text" id="setting-agent-name" onchange="saveSettings()" placeholder="Enter your name">
+      <div class="nav-group-title">People & Intelligence</div>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('customers')" id="nav-customers">
+        <span class="icon">👥</span> Customers
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('employees')" id="nav-employees">
+        <span class="icon">👔</span> Employees & Roles
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('reports')" id="nav-reports">
+        <span class="icon">📈</span> Reports & Export
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('analytics')" id="nav-analytics">
+        <span class="icon">🎯</span> Analytics
+      </a>
+      <a class="sidebar-item" onclick="AgentOS.navigateTo('ai')" id="nav-ai">
+        <span class="icon">🤖</span> AI Assistant
+      </a>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="main-content">
+
+      <!-- SECTION 1: DASHBOARD -->
+      <section id="sec-dashboard" class="content-section">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>📊</span> Agent Operating Dashboard</h1>
+            <p class="section-subtitle" id="dash-subtitle">Real-time balances and mobile money metrics across lines</p>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-primary" onclick="AgentOS.openNewTxModal()">
+              <span>➕</span> New Transaction (N)
+            </button>
+            <button class="btn btn-secondary" onclick="AgentOS.openDailyClosingModal()">
+              <span>📑</span> Daily Closing
+            </button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Shop Name</label>
-          <input type="text" id="setting-shop-name" onchange="saveSettings()" placeholder="Enter shop name">
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Networks Enabled</div>
-        <div class="stat-row">
-          <span>Airtel Money</span>
-          <label class="switch">
-            <input type="checkbox" id="setting-use-airtel" onchange="saveSettings()">
-            <span class="slider"></span>
-          </label>
-        </div>
-        <div class="stat-row">
-          <span>MTN MoMo</span>
-          <label class="switch">
-            <input type="checkbox" id="setting-use-mtn" onchange="saveSettings()">
-            <span class="slider"></span>
-          </label>
-        </div>
-      </div>
-      <button class="btn btn-secondary" onclick="exportData()">Export Backup (JSON)</button>
-      <button class="btn btn-danger" onclick="clearAllData()">Wipe All Data</button>
-    </section>
 
-  </main>
+        <!-- Metrics Grid -->
+        <div class="metrics-grid">
+          <div class="metric-card card-primary">
+            <span class="metric-label">TODAY'S PROFIT <span style="color: var(--success)">+12.4%</span></span>
+            <div class="metric-value" id="m-profit">UGX 145,500</div>
+            <span class="metric-subtext">Net after expenses</span>
+          </div>
+          <div class="metric-card card-mtn">
+            <span class="metric-label">MTN FLOAT BALANCE</span>
+            <div class="metric-value" id="m-mtn-float">UGX 4,250,000</div>
+            <span class="metric-subtext" id="m-mtn-status">🟡 Target: UGX 5,000,000</span>
+          </div>
+          <div class="metric-card card-airtel">
+            <span class="metric-label">AIRTEL FLOAT BALANCE</span>
+            <div class="metric-value" id="m-airtel-float">UGX 3,120,000</div>
+            <span class="metric-subtext">🔴 Low Float Alert (&lt; 3.5M)</span>
+          </div>
+          <div class="metric-card card-bank">
+            <span class="metric-label">BANK ACCOUNT BALANCE</span>
+            <div class="metric-value" id="m-bank-balance">UGX 12,800,000</div>
+            <span class="metric-subtext">Stanbic & Centenary</span>
+          </div>
+          <div class="metric-card card-cash">
+            <span class="metric-label">COUNTER CASH IN HAND</span>
+            <div class="metric-value" id="m-cash-balance">UGX 2,450,000</div>
+            <span class="metric-subtext">Safe Limit: UGX 5,000,000</span>
+          </div>
+        </div>
 
-  <nav id="bottom-nav">
-    <button class="nav-btn active airtel-nav" id="nav-airtel" onclick="switchView('airtel')">
-      <div class="icon">🔴</div>Airtel
+        <!-- Quick Alert Bar -->
+        <div id="alertBox" class="ai-assistant-card" style="margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">🔔</span>
+            <div>
+              <strong id="alertTitle">Float Rebalance Recommendation</strong>
+              <div style="font-size: 12px; color: var(--text-muted);" id="alertMsg">Airtel Float is approaching low threshold. Transfer UGX 1,000,000 from Bank Account.</div>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-primary" onclick="AgentOS.navigateTo('float')">Manage Float</button>
+        </div>
+
+        <!-- Live Visual Charts Canvas Grid -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+          <div class="table-container" style="padding: 16px;">
+            <h3 style="font-size: 15px; margin-bottom: 12px;">📈 Peak Hours Transaction Flow</h3>
+            <canvas id="chartPeakHours" height="180"></canvas>
+          </div>
+          <div class="table-container" style="padding: 16px;">
+            <h3 style="font-size: 15px; margin-bottom: 12px;">⚖️ Float vs Cash Balance Trend</h3>
+            <canvas id="chartFloatCash" height="180"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: DIGITAL AGENT BOOK & DYNAMIC LINE LEDGERS -->
+      <section id="sec-ledgers" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>📖</span> Digital Agent Book Ledgers</h1>
+            <p class="section-subtitle">Data-driven line tables: Each Mobile Money line gets its own separate running ledger</p>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-secondary" onclick="AgentOS.openNewCustomLineModal()">
+              <span>➕</span> Add Custom Line / Network
+            </button>
+            <button class="btn btn-primary" onclick="AgentOS.exportCurrentLedgerCSV()">
+              <span>📥</span> Export Table CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Dynamic Ledger Line Tabs -->
+        <div class="ledger-tabs-container">
+          <div class="ledger-tabs" id="ledgerTabsNav">
+            <!-- Rendered dynamically: All Lines, MTN, Airtel, Bank, Cash, etc. -->
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">
+            Active Line Balance: <strong id="activeLineBalance" style="color: var(--primary-accent)">UGX 0</strong>
+          </div>
+        </div>
+
+        <!-- Dynamic Ledger Table -->
+        <div class="table-container">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="ledgerSearchInput" placeholder="Search line ledger (Press '/' key)..." onkeyup="AgentOS.filterLedgerTable()">
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <select id="ledgerTypeFilter" class="form-select" style="width: auto; padding: 6px 10px;" onchange="AgentOS.filterLedgerTable()">
+                <option value="ALL">All Transaction Types</option>
+                <option value="DEPOSIT">Deposits Only</option>
+                <option value="WITHDRAWAL">Withdrawals Only</option>
+                <option value="AIRTIME">Airtime & Bundles</option>
+                <option value="FLOAT">Float Transfers</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="data-table" id="ledgerTable">
+            <thead>
+              <tr>
+                <th onclick="AgentOS.sortLedger('txNo')">Tx # ↕</th>
+                <th onclick="AgentOS.sortLedger('datetime')">Date & Time ↕</th>
+                <th onclick="AgentOS.sortLedger('customer')">Customer Name & Phone ↕</th>
+                <th onclick="AgentOS.sortLedger('type')">Type ↕</th>
+                <th onclick="AgentOS.sortLedger('line')">Line/Network ↕</th>
+                <th onclick="AgentOS.sortLedger('deposit')">Deposit (IN) ↕</th>
+                <th onclick="AgentOS.sortLedger('withdrawal')">Withdrawal (OUT) ↕</th>
+                <th onclick="AgentOS.sortLedger('commission')">Commission ↕</th>
+                <th onclick="AgentOS.sortLedger('cashBal')">Running Cash ↕</th>
+                <th onclick="AgentOS.sortLedger('floatBal')">Running Float ↕</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 3: TRANSACTIONS LIST (ALL RECORDS) -->
+      <section id="sec-transactions" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>💸</span> All Transaction Records</h1>
+            <p class="section-subtitle">Complete chronological register of every transaction across all networks</p>
+          </div>
+          <div class="action-bar">
+            <button class="btn btn-secondary" onclick="AgentOS.exportCurrentLedgerCSV()"><span>📥</span> Export CSV</button>
+            <button class="btn btn-primary" onclick="AgentOS.openNewTxModal()"><span>➕</span> Record New Transaction</button>
+          </div>
+        </div>
+
+        <!-- Master Transaction Stats Summary Bar -->
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 16px;">
+          <div class="metric-card" style="padding: 12px;">
+            <span class="metric-label">TOTAL TRANSACTION RECORDS</span>
+            <div class="metric-value" id="txSummaryCount" style="font-size: 20px;">0</div>
+          </div>
+          <div class="metric-card" style="padding: 12px;">
+            <span class="metric-label">TOTAL VOLUME</span>
+            <div class="metric-value" id="txSummaryVolume" style="font-size: 20px; color: var(--primary-accent);">UGX 0</div>
+          </div>
+          <div class="metric-card" style="padding: 12px;">
+            <span class="metric-label">TOTAL COMMISSIONS EARNED</span>
+            <div class="metric-value" id="txSummaryCommission" style="font-size: 20px; color: var(--success);">UGX 0</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-toolbar">
+            <div class="search-box" style="width: 320px;">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="masterSearchInput" placeholder="Filter all records by customer, phone, ref..." onkeyup="AgentOS.filterMasterTxTable()">
+            </div>
+          </div>
+
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tx Ref</th>
+                <th>Time</th>
+                <th>Customer Name & Phone</th>
+                <th>Network Line</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Commission</th>
+                <th>Agent</th>
+                <th>Status</th>
+                <th>Receipt</th>
+              </tr>
+            </thead>
+            <tbody id="txMasterTableBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 4: DAILY CLOSING WIZARD -->
+      <section id="sec-closing" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>📑</span> Daily Closing & Reconciliation</h1>
+            <p class="section-subtitle">Formal end-of-day register balancing and profit calculations</p>
+          </div>
+          <button class="btn btn-success" onclick="AgentOS.openDailyClosingModal()"><span>📝</span> Start Daily Reconciliation</button>
+        </div>
+
+        <div class="table-container" style="padding: 20px;">
+          <h3 style="margin-bottom: 14px;">Recent Daily Closing Reports</h3>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Branch</th>
+                <th>Expected Cash</th>
+                <th>Actual Cash</th>
+                <th>Cash Difference</th>
+                <th>Expected Float</th>
+                <th>Actual Float</th>
+                <th>Net Profit</th>
+                <th>Closed By</th>
+                <th>Report</th>
+              </tr>
+            </thead>
+            <tbody id="dailyClosingHistoryBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 5: FLOAT MANAGEMENT -->
+      <section id="sec-float" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>⚡</span> Float Management & Rebalancing</h1>
+            <p class="section-subtitle">Monitor float limits, transfer liquidity between accounts & record float purchases</p>
+          </div>
+          <button class="btn btn-primary" onclick="AgentOS.openFloatTransferModal()"><span>🔄</span> Inter-Line Float Transfer</button>
+        </div>
+        <div class="metrics-grid" id="floatMetricsGrid">
+          <!-- Rendered dynamically -->
+        </div>
+      </section>
+
+      <!-- SECTION 6: EXPENSES -->
+      <section id="sec-expenses" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>🧾</span> Business Operating Expenses</h1>
+            <p class="section-subtitle">Track rent, power, airtime, salaries, transport, and bank charges</p>
+          </div>
+          <button class="btn btn-primary" onclick="AgentOS.openNewExpenseModal()"><span>➕</span> Log New Expense</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Logged By</th>
+                <th>Branch</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 7: INVENTORY -->
+      <section id="sec-inventory" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>📦</span> Accessories & SIM Card Inventory</h1>
+            <p class="section-subtitle">Stock levels for SIM cards, scratch cards, phones, power banks, earphones</p>
+          </div>
+          <button class="btn btn-primary" onclick="AgentOS.openNewItemModal()"><span>➕</span> Add Inventory Item</button>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item Code</th>
+                <th>Item Name</th>
+                <th>Category</th>
+                <th>Stock Level</th>
+                <th>Unit Price</th>
+                <th>Supplier</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 8: CUSTOMERS -->
+      <section id="sec-customers" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>👥</span> Customer Directory & Loyalty</h1>
+            <p class="section-subtitle">Repeat customer history, total volume, and VIP loyalty status</p>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer Name</th>
+                <th>Phone Number</th>
+                <th>Total Tx Count</th>
+                <th>Total Volume</th>
+                <th>Loyalty Rank</th>
+                <th>Last Active</th>
+              </tr>
+            </thead>
+            <tbody id="customerTableBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 9: EMPLOYEES & SECURITY -->
+      <section id="sec-employees" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>👔</span> Staff & Role-Based Permissions</h1>
+            <p class="section-subtitle">Manager, Cashier, Accountant access rights & security PIN configurations</p>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Employee Name</th>
+                <th>Role</th>
+                <th>Branch</th>
+                <th>PIN Code Status</th>
+                <th>Biometric Enrolled</th>
+                <th>Last Active</th>
+              </tr>
+            </thead>
+            <tbody id="employeeTableBody">
+              <!-- JS rendered -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 10: REPORTS & EXPORTS -->
+      <section id="sec-reports" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>📈</span> Executive Financial Reports & Export</h1>
+            <p class="section-subtitle">Generate official accounting reports for bank reconciliation & tax filing</p>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+          <div class="metric-card">
+            <h3>📑 Daily Financial Summary</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 8px 0 16px 0;">Complete line breakdown, commissions, and expenses for today.</p>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="AgentOS.generateReport('PDF')">Export PDF</button>
+              <button class="btn btn-sm btn-secondary" onclick="AgentOS.generateReport('EXCEL')">Export Excel</button>
+            </div>
+          </div>
+          <div class="metric-card">
+            <h3>📊 Monthly Profit & Commission Report</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 8px 0 16px 0;">Detailed revenue report filtered by mobile money network line.</p>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-sm btn-primary" onclick="AgentOS.generateReport('PDF')">Export PDF</button>
+              <button class="btn btn-sm btn-secondary" onclick="AgentOS.generateReport('EXCEL')">Export Excel</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 11: ANALYTICS -->
+      <section id="sec-analytics" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>🎯</span> Deep Business Analytics</h1>
+            <p class="section-subtitle">Peak hours, highest revenue days, line popularity</p>
+          </div>
+        </div>
+        <div class="table-container" style="padding: 20px;">
+          <h3>Revenue by Mobile Money Network Line</h3>
+          <canvas id="chartLineBreakdown" height="220"></canvas>
+        </div>
+      </section>
+
+      <!-- SECTION 12: AI ASSISTANT -->
+      <section id="sec-ai" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>🤖</span> AgentOS Intelligence Assistant</h1>
+            <p class="section-subtitle">Automated float forecasts, anomaly detection & financial advice</p>
+          </div>
+        </div>
+
+        <div class="ai-assistant-card">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+            <span style="font-size: 24px;">🤖</span>
+            <div>
+              <strong style="font-size: 16px;">AgentOS Business Copilot</strong>
+              <div style="font-size: 12px; color: var(--text-muted);">Ask questions about float, profit, customers, or closing discrepancies</div>
+            </div>
+          </div>
+
+          <div class="ai-chat-box" id="aiChatBox">
+            <div class="ai-msg bot">
+              👋 Hello! I am your AgentOS Assistant. I monitor your MTN/Airtel float levels and daily profit trends. How can I help you today?
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+            <button class="btn btn-sm btn-secondary" onclick="AgentOS.sendAIPrompt('Predict my Friday float needs')">🔮 Predict Float Requirement</button>
+            <button class="btn btn-sm btn-secondary" onclick="AgentOS.sendAIPrompt('Check suspicious transactions')">🚨 Anomaly Check</button>
+            <button class="btn btn-sm btn-secondary" onclick="AgentOS.sendAIPrompt('Generate today financial summary')">📝 Financial Summary</button>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="aiInput" class="form-input" placeholder="Type a message or command..." onkeydown="if(event.key==='Enter') AgentOS.submitAIChat()">
+            <button class="btn btn-primary" onclick="AgentOS.submitAIChat()">Send</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 13: PHONE SIMULATOR VIEW (Phone App Experience) -->
+      <section id="sec-phone-view" class="content-section" style="display: none;">
+        <div class="section-header">
+          <div>
+            <h1 class="section-title"><span>📱</span> AgentOS Phone App Experience</h1>
+            <p class="section-subtitle">Primary counter experience: 30-second rapid entry, offline queue, touch targets</p>
+          </div>
+        </div>
+
+        <!-- Phone Mockup Container -->
+        <div class="phone-simulator-frame">
+          <div class="phone-screen">
+            <div class="phone-notch">
+              <div class="phone-speaker"></div>
+              <div class="phone-camera"></div>
+            </div>
+
+            <!-- Phone Top Header -->
+            <div class="phone-header">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <div class="brand-logo" style="width: 26px; height: 26px; font-size: 14px;">A</div>
+                <strong style="font-size: 14px;">AgentOS Mobile</strong>
+              </div>
+            </div>
+
+            <!-- Phone Body Screen -->
+            <div class="phone-body" id="phoneBodyContent">
+
+              <!-- Rapid 30s Entry Card -->
+              <div class="quick-entry-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                  <span style="font-size: 12px; font-weight: 700;">⚡ RAPID 30-SEC ENTRY</span>
+                  <button class="btn btn-sm btn-secondary" onclick="AgentOS.simVoiceToText()" title="Voice Entry">🎤 Voice</button>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                  <select id="phoneLineSelect" class="form-select" style="font-weight: 700;">
+                    <option value="MTN">🟡 MTN Mobile Money</option>
+                    <option value="AIRTEL">🔴 Airtel Money</option>
+                    <option value="BANK">🏦 Bank Deposit/Withdrawal</option>
+                  </select>
+                </div>
+
+                <div class="form-row" style="margin-bottom: 8px;">
+                  <select id="phoneTxType" class="form-select">
+                    <option value="DEPOSIT">📥 Deposit (Cash In)</option>
+                    <option value="WITHDRAWAL">📤 Withdrawal (Cash Out)</option>
+                    <option value="AIRTIME">📲 Airtime & Bundles</option>
+                  </select>
+                  <input type="text" id="phoneCustomerPhone" class="form-input" placeholder="Customer Phone">
+                </div>
+
+                <!-- Touch Keypad Display -->
+                <div class="numpad-display" id="phoneNumpadDisplay">0</div>
+
+                <!-- Touch Numeric Keypad -->
+                <div class="numpad-grid">
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('1')">1</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('2')">2</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('3')">3</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('4')">4</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('5')">5</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('6')">6</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('7')">7</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('8')">8</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('9')">9</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('C')" style="color: var(--danger)">C</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('0')">0</button>
+                  <button class="numpad-btn" onclick="AgentOS.pressKey('00')">00</button>
+                </div>
+
+                <button class="btn btn-success btn-lg" style="width: 100%; margin-top: 12px;" onclick="AgentOS.submitPhoneQuickTx()">
+                  ⚡ CONFIRM & PRINT RECEIPT
+                </button>
+              </div>
+
+              <!-- Recent Counter Activity -->
+              <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px;">
+                RECENT COUNTER TRANSACTIONS
+              </div>
+              <div id="phoneRecentList">
+                <!-- JS rendered -->
+              </div>
+            </div>
+
+            <!-- Phone Bottom Touch Nav -->
+            <div class="phone-nav-bar">
+              <button class="phone-nav-item active" onclick="AgentOS.phoneNav('entry')">
+                <span class="icon">⚡</span> Entry
+              </button>
+              <button class="phone-nav-item" onclick="AgentOS.phoneNav('ledger')">
+                <span class="icon">📖</span> Ledger
+              </button>
+              <button class="phone-nav-item" onclick="AgentOS.phoneNav('receipts')">
+                <span class="icon">🧾</span> Receipts
+              </button>
+              <button class="phone-nav-item" onclick="AgentOS.phoneNav('profile')">
+                <span class="icon">👤</span> Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Keyboard Hints Footer -->
+      <footer class="keyboard-hints">
+        <span>Shortcuts:</span>
+        <span><span class="kbd">N</span> New Tx</span>
+        <span><span class="kbd">/</span> Search Ledger</span>
+        <span><span class="kbd">D</span> Dashboard</span>
+        <span><span class="kbd">L</span> Digital Book</span>
+        <span><span class="kbd">ESC</span> Close Modal</span>
+      </footer>
+
+    </main>
+  </div>
+
+  <!-- FIXED BOTTOM NAVIGATION BAR -->
+  <nav class="app-bottom-nav">
+    <button class="bottom-nav-item active" id="bnav-dashboard" onclick="AgentOS.navigateTo('dashboard')">
+      <span class="icon">📊</span>
+      <span>Dashboard</span>
     </button>
-    <button class="nav-btn mtn-nav" id="nav-mtn" onclick="switchView('mtn')">
-      <div class="icon">🟡</div>MTN
+    <button class="bottom-nav-item" id="bnav-ledgers" onclick="AgentOS.navigateTo('ledgers')">
+      <span class="icon">📖</span>
+      <span>Digital Book</span>
     </button>
-    <button class="nav-btn" id="nav-float" onclick="switchView('float')">
-      <div class="icon">💰</div>Float
+    <button class="bottom-nav-item nav-action-btn" onclick="AgentOS.openNewTxModal()" title="Record New Transaction">
+      <span class="icon">➕</span>
     </button>
-    <button class="nav-btn" id="nav-summary" onclick="switchView('summary')">
-      <div class="icon">📊</div>Stats
+    <button class="bottom-nav-item" id="bnav-transactions" onclick="AgentOS.navigateTo('transactions')">
+      <span class="icon">💸</span>
+      <span>All Records</span>
     </button>
-    <button class="nav-btn" id="nav-settings" onclick="switchView('settings')">
-      <div class="icon">⚙️</div>Settings
+    <button class="bottom-nav-item" id="bnav-closing" onclick="AgentOS.navigateTo('closing')">
+      <span class="icon">📑</span>
+      <span>Closing</span>
     </button>
   </nav>
 
-  <!-- Transaction Modal -->
-  <div class="modal-overlay" id="tx-modal">
-    <div class="modal-content">
-      <div class="modal-header" id="tx-modal-title">Add Transaction</div>
-      <form id="tx-form" onsubmit="saveTransaction(event)">
-        <input type="hidden" id="tx-network">
-        <div class="form-group">
-          <label>Transaction Type</label>
-          <select id="tx-type" required>
-            <option value="" disabled selected>Select type...</option>
-            <option value="Cash In">Cash In (Deposit)</option>
-            <option value="Cash Out">Cash Out (Withdraw)</option>
-            <option value="Airtime">Airtime</option>
-            <option value="Bundle">Data Bundle</option>
-            <option value="Deposit Float">Top-up Float</option>
-            <option value="Withdraw Float">Reduce Float</option>
-          </select>
+  <!-- MODAL 1: NEW TRANSACTION MODAL -->
+  <div id="modalNewTx" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">💸 Record New Transaction</h2>
+        <button class="icon-btn" onclick="AgentOS.closeModal('modalNewTx')">✕</button>
+      </div>
+      <form onsubmit="event.preventDefault(); AgentOS.submitNewTx();">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Network / Account Line</label>
+            <select id="txFormLine" class="form-select" required>
+              <!-- JS rendered lines -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transaction Type</label>
+            <select id="txFormType" class="form-select" required onchange="AgentOS.updateTxFormFields()">
+              <option value="DEPOSIT">Cash Deposit (Cash In)</option>
+              <option value="WITHDRAWAL">Cash Withdrawal (Cash Out)</option>
+              <option value="AIRTIME">Airtime Sale</option>
+              <option value="BUNDLE">Data Bundle Sale</option>
+              <option value="UTILITY">Utility / Bill Payment</option>
+              <option value="SCHOOL">School Fees</option>
+              <option value="FLOAT_BUY">Float Purchase</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Amount (UGX)</label>
-          <input type="number" id="tx-amount" min="1" step="1" required placeholder="e.g. 50000">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Amount (UGX)</label>
+            <input type="number" id="txFormAmount" class="form-input" placeholder="e.g. 50000" required onkeyup="AgentOS.calcTxCommission()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Estimated Commission (UGX)</label>
+            <input type="number" id="txFormCommission" class="form-input" placeholder="0">
+          </div>
         </div>
-        <div class="form-group">
-          <label>Customer's Phone Number</label>
-          <input type="text" id="tx-customer-no" placeholder="e.g. 0712345678" inputmode="tel">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Customer Name</label>
+            <input type="text" id="txFormCustomer" class="form-input" placeholder="John Doe">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Customer Phone</label>
+            <input type="text" id="txFormPhone" class="form-input" placeholder="0771234567">
+          </div>
         </div>
+
         <div class="form-group">
-          <label>Customer Name (Optional)</label>
-          <input type="text" id="tx-note" placeholder="e.g. John Doe">
+          <label class="form-label">Transaction Reference / ID (Optional)</label>
+          <input type="text" id="txFormRef" class="form-input" placeholder="e.g. 1928374652">
         </div>
+
         <div class="form-group">
-          <label>Description / Note (Optional)</label>
-          <input type="text" id="tx-description" placeholder="e.g. school fees, rent...">
+          <label class="form-label">Agent Notes</label>
+          <textarea id="txFormNotes" class="form-textarea" rows="2" placeholder="Optional notes..."></textarea>
         </div>
-        <div class="flex gap-2">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('tx-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="tx-submit-btn">Save</button>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="AgentOS.closeModal('modalNewTx')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save & Print Receipt</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Transaction Details & Edit Modal -->
-  <div class="modal-overlay" id="tx-details-modal">
-    <div class="modal-content">
-      <div class="modal-header" id="details-modal-title">Transaction Details</div>
-      
-      <!-- Display Mode -->
-      <div id="details-view-mode">
-        <div class="card" style="margin-bottom: 12px; font-size: 14px;">
-          <div class="stat-row"><span>Type:</span> <strong id="det-type"></strong></div>
-          <div class="stat-row"><span>Amount:</span> <strong id="det-amount"></strong></div>
-          <div class="stat-row"><span>Date/Time:</span> <strong id="det-datetime"></strong></div>
-          <div class="stat-row"><span>Cust No:</span> <strong id="det-custno"></strong></div>
-          <div class="stat-row"><span>Name/Note:</span> <strong id="det-name"></strong></div>
-          <div class="stat-row"><span>Description:</span> <strong id="det-desc"></strong></div>
-          <div class="stat-row"><span>Ending Bal:</span> <strong id="det-eb"></strong></div>
+  <!-- MODAL 2: ADD DYNAMIC CUSTOM LINE MODAL -->
+  <div id="modalCustomLine" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">➕ Add New Line / Network</h2>
+        <button class="icon-btn" onclick="AgentOS.closeModal('modalCustomLine')">✕</button>
+      </div>
+      <form onsubmit="event.preventDefault(); AgentOS.submitCustomLine();">
+        <div class="form-group">
+          <label class="form-label">Line Name (e.g., M-Pesa, Zamtel, SACCO Vault)</label>
+          <input type="text" id="customLineName" class="form-input" placeholder="Line Name" required>
         </div>
-        <input type="hidden" id="det-tx-id">
-        <input type="hidden" id="det-tx-network">
-        
-        <div style="display: flex; gap: 10px;">
-          <button class="btn btn-secondary" style="flex: 1; margin-bottom: 0;" onclick="toggleEditMode(true)">Edit</button>
-          <button class="btn btn-danger" style="flex: 1; margin-bottom: 0;" onclick="deleteFromDetails()">Delete</button>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Initial Float Balance (UGX)</label>
+            <input type="number" id="customLineFloat" class="form-input" value="0" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Theme Color Accent</label>
+            <select id="customLineColor" class="form-select">
+              <option value="#6366f1">Indigo</option>
+              <option value="#a855f7">Purple</option>
+              <option value="#ec4899">Pink</option>
+              <option value="#f97316">Orange</option>
+              <option value="#06b6d4">Cyan</option>
+            </select>
+          </div>
         </div>
-        <button class="btn" style="margin-top: 10px; background: transparent; color: var(--text-muted); padding: 10px;" onclick="closeDetailsModal()">Close</button>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="AgentOS.closeModal('modalCustomLine')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Line Table</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: DAILY CLOSING WIZARD MODAL -->
+  <div id="modalClosingWizard" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">📑 Daily Register Reconciliation Wizard</h2>
+        <button class="icon-btn" onclick="AgentOS.closeModal('modalClosingWizard')">✕</button>
+      </div>
+      <form onsubmit="event.preventDefault(); AgentOS.submitDailyClosing();">
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">
+          Count the physical cash in your safe and verify your network float balances to calculate today's net profit and detect any variances.
+        </p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Expected Physical Cash</label>
+            <input type="number" id="closeExpectedCash" class="form-input" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Actual Physical Cash Counted</label>
+            <input type="number" id="closeActualCash" class="form-input" placeholder="Counted Cash" required onkeyup="AgentOS.calcClosingVariance()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Cash Variance / Difference</label>
+            <input type="text" id="closeCashDiff" class="form-input" readonly style="font-weight: bold;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Commission Today</label>
+            <input type="text" id="closeTotalCommission" class="form-input" readonly style="color: var(--success); font-weight: bold;">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Closing Notes & Observations</label>
+          <textarea id="closeNotes" class="form-textarea" rows="2" placeholder="e.g., Shortage of 5k explained by late float purchase..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+          <button type="button" class="btn btn-secondary" onclick="AgentOS.closeModal('modalClosingWizard')">Cancel</button>
+          <button type="submit" class="btn btn-success">Finalize & Generate Daily Report</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: RECEIPT GENERATOR & PRINT MODAL -->
+  <div id="modalReceipt" class="modal-overlay">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <h2 class="modal-title">🧾 Transaction Receipt</h2>
+        <button class="icon-btn" onclick="AgentOS.closeModal('modalReceipt')">✕</button>
       </div>
 
-      <!-- Edit Mode -->
-      <form id="edit-form" onsubmit="submitEditTransaction(event)" style="display: none;">
-        <div class="form-group">
-          <label>Amount (UGX)</label>
-          <input type="number" id="edit-amount" required>
+      <div style="display: flex; gap: 8px; margin-bottom: 14px; justify-content: center;">
+        <button id="btnFormatThermal" class="btn btn-sm btn-primary" onclick="AgentOS.toggleReceiptFormat('thermal')">80mm Thermal Print</button>
+        <button id="btnFormatA4" class="btn btn-sm btn-secondary" onclick="AgentOS.toggleReceiptFormat('a4')">A4 Invoice Format</button>
+      </div>
+
+      <!-- Printable Area -->
+      <div class="printable-area">
+        <div id="receiptPaper" class="receipt-paper receipt-thermal">
+          <!-- Rendered dynamically -->
         </div>
-        <div class="form-group">
-          <label>Customer Number (Optional)</label>
-          <input type="text" id="edit-customerNo">
-        </div>
-        <div class="form-group">
-          <label>Customer Name / Note</label>
-          <input type="text" id="edit-note">
-        </div>
-        <div class="form-group">
-          <label>Description (Optional)</label>
-          <input type="text" id="edit-description">
-        </div>
-        <div style="display: flex; gap: 10px;">
-          <button type="submit" class="btn btn-primary" style="flex: 2; margin-bottom: 0;">Save Changes</button>
-          <button type="button" class="btn btn-secondary" style="flex: 1; margin-bottom: 0;" onclick="toggleEditMode(false)">Cancel</button>
-        </div>
-      </form>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Print Receipt</button>
+        <button class="btn btn-success" onclick="AgentOS.shareWhatsApp()">💬 Share WhatsApp</button>
+        <button class="btn btn-secondary" onclick="AgentOS.downloadReceiptPDF()">📥 Download PDF</button>
+        <button class="btn btn-secondary" onclick="AgentOS.closeModal('modalReceipt')">Close</button>
+      </div>
     </div>
   </div>
 
-  <script>
-    // --- State Management ---
-    const STORAGE_KEY = 'agentbook_data';
-    
-    let state = {
-      settings: {
-        agentName: '',
-        shopName: '',
-        useAirtel: true,
-        useMtn: true
-      },
-      airtel: { float: 0 },
-      mtn: { float: 0 },
-      cash: 0,
-      transactions: [],
-      currentView: 'airtel',
-      summaryRange: 'today'
-    };
-
-    function init() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          state = { ...state, ...parsed, settings: { ...state.settings, ...(parsed.settings || {}) } };
-        } catch(e) {}
-      }
-      
-      document.getElementById('setting-agent-name').value = state.settings.agentName || '';
-      document.getElementById('setting-shop-name').value = state.settings.shopName || '';
-      document.getElementById('setting-use-airtel').checked = state.settings.useAirtel;
-      document.getElementById('setting-use-mtn').checked = state.settings.useMtn;
-      
-      document.getElementById('input-airtel-float').value = state.airtel.float || 0;
-      document.getElementById('input-mtn-float').value = state.mtn.float || 0;
-      document.getElementById('input-cash').value = state.cash || 0;
-
-      applySettings();
-      switchView(state.settings.useAirtel ? 'airtel' : (state.settings.useMtn ? 'mtn' : 'float'));
-      updateBalancesDisplay();
-    }
-
-    function persist() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-
-    // --- Helpers ---
-    function formatMoney(amount) {
-      return new Intl.NumberFormat('en-UG').format(Math.round(amount));
-    }
-
-    function getTodayStr() {
-      const d = new Date();
-      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    }
-
-    function formatTime(timestamp) {
-      const d = new Date(timestamp);
-      let h = d.getHours();
-      const m = String(d.getMinutes()).padStart(2,'0');
-      const ampm = h >= 12 ? 'PM' : 'AM';
-      h = h % 12 || 12; 
-      return `${h}:${m} ${ampm}`;
-    }
-
-    // --- Core Logic ---
-    function applySettings() {
-      const a = state.settings.useAirtel;
-      const m = state.settings.useMtn;
-      
-      document.getElementById('nav-airtel').style.display = a ? 'flex' : 'none';
-      document.getElementById('group-airtel-float').style.display = a ? 'block' : 'none';
-      document.getElementById('summary-airtel-card').style.display = a ? 'block' : 'none';
-      
-      document.getElementById('nav-mtn').style.display = m ? 'flex' : 'none';
-      document.getElementById('group-mtn-float').style.display = m ? 'block' : 'none';
-      document.getElementById('summary-mtn-card').style.display = m ? 'block' : 'none';
-
-      if (!a && state.currentView === 'airtel') switchView(m ? 'mtn' : 'float');
-      if (!m && state.currentView === 'mtn') switchView('float');
-    }
-
-    function saveSettings() {
-      state.settings.agentName = document.getElementById('setting-agent-name').value;
-      state.settings.shopName = document.getElementById('setting-shop-name').value;
-      state.settings.useAirtel = document.getElementById('setting-use-airtel').checked;
-      state.settings.useMtn = document.getElementById('setting-use-mtn').checked;
-      persist();
-      applySettings();
-    }
-
-    function updateBalances() {
-      state.airtel.float = parseInt(document.getElementById('input-airtel-float').value) || 0;
-      state.mtn.float = parseInt(document.getElementById('input-mtn-float').value) || 0;
-      state.cash = parseInt(document.getElementById('input-cash').value) || 0;
-      persist();
-      updateBalancesDisplay();
-      renderBooks();
-    }
-
-    function updateBalancesDisplay() {
-      const total = state.airtel.float + state.mtn.float + state.cash;
-      document.getElementById('display-total-value').innerText = formatMoney(total);
-    }
-
-    // --- UI Navigation ---
-    function switchView(viewName) {
-      document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      
-      const viewEl = document.getElementById(`view-${viewName}`);
-      const navEl = document.getElementById(`nav-${viewName}`);
-      if(viewEl) viewEl.classList.remove('hidden');
-      if(navEl) navEl.classList.add('active');
-      state.currentView = viewName;
-
-      const header = document.getElementById('main-header');
-      const themeColor = document.getElementById('theme-color');
-      
-      if (viewName === 'airtel') {
-        header.className = 'airtel';
-        header.innerText = 'Airtel Book';
-        themeColor.content = '#ff3b30';
-        renderBooks();
-      } else if (viewName === 'mtn') {
-        header.className = 'mtn';
-        header.innerText = 'MTN Book';
-        themeColor.content = '#ffcc00';
-        renderBooks();
-      } else if (viewName === 'float') {
-        header.className = 'neutral';
-        header.innerText = 'Float & Cash';
-        themeColor.content = '#0f172a';
-      } else if (viewName === 'summary') {
-        header.className = 'neutral';
-        header.innerText = 'Analytics';
-        themeColor.content = '#0f172a';
-        updateSummary();
-      } else if (viewName === 'settings') {
-        header.className = 'neutral';
-        header.innerText = 'Settings';
-        themeColor.content = '#0f172a';
-      }
-    }
-
-    // --- Modals ---
-    function openTransactionModal(network) {
-      document.getElementById('tx-network').value = network;
-      document.getElementById('tx-modal-title').innerText = `Add ${network.toUpperCase()} Transaction`;
-      const btn = document.getElementById('tx-submit-btn');
-      btn.className = `btn btn-primary ${network}`;
-      
-      document.getElementById('tx-type').value = '';
-      document.getElementById('tx-amount').value = '';
-      document.getElementById('tx-note').value = '';
-      
-      openModal('tx-modal');
-    }
-
-    function openModal(id) {
-      document.getElementById(id).classList.add('active');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
-    }
-
-    // --- Transactions ---
-    function saveTransaction(e) {
-      e.preventDefault();
-      const network = document.getElementById('tx-network').value;
-      const type = document.getElementById('tx-type').value;
-      const amount = parseInt(document.getElementById('tx-amount').value);
-      const note = document.getElementById('tx-note').value;
-      const customerNo = document.getElementById('tx-customer-no').value.trim();
-      const description = document.getElementById('tx-description').value.trim();
-      
-      if (!type || isNaN(amount) || amount <= 0) return;
-
-      let floatChange = 0;
-      let cashChange = 0;
-
-      if (type === 'Cash In') {
-        floatChange = -amount;
-        cashChange = amount;
-      } else if (type === 'Cash Out') {
-        floatChange = amount;
-        cashChange = -amount;
-      } else if (type === 'Airtime' || type === 'Bundle') {
-        floatChange = -amount;
-        cashChange = amount;
-      } else if (type === 'Deposit Float') {
-        floatChange = amount;
-        cashChange = -amount;
-      } else if (type === 'Withdraw Float') {
-        floatChange = -amount;
-        cashChange = amount;
-      }
-
-      state[network].float += floatChange;
-      state.cash += cashChange;
-
-      document.getElementById(`input-${network}-float`).value = state[network].float;
-      document.getElementById('input-cash').value = state.cash;
-      updateBalancesDisplay();
-
-      const tx = {
-        id: Date.now().toString(),
-        network,
-        type,
-        amount,
-        note,
-        customerNo,
-        description,
-        floatAfter: state[network].float,
-        timestamp: Date.now(),
-        dateStr: getTodayStr(),
-        locked: false
-      };
-
-      state.transactions.unshift(tx);
-      persist();
-      closeModal('tx-modal');
-      // Reset new fields
-      document.getElementById('tx-customer-no').value = '';
-      document.getElementById('tx-description').value = '';
-      renderBooks();
-    }
-
-    function deleteTransaction(id, network) {
-      const txIndex = state.transactions.findIndex(t => t.id === id);
-      if (txIndex === -1) return;
-      const tx = state.transactions[txIndex];
-      
-      if (tx.locked) {
-        alert("Cannot delete locked transactions from previous days.");
-        return;
-      }
-
-      if (!confirm(`Delete ${tx.type} of ${formatMoney(tx.amount)} UGX?`)) return;
-
-      let floatChange = 0;
-      let cashChange = 0;
-      const amount = tx.amount;
-
-      if (['Cash In', 'Airtime', 'Bundle', 'Withdraw Float'].includes(tx.type)) {
-        floatChange = amount;
-        cashChange = -amount;
-      } else if (['Cash Out', 'Deposit Float'].includes(tx.type)) {
-        floatChange = -amount;
-        cashChange = amount;
-      }
-
-      state[network].float += floatChange;
-      state.cash += cashChange;
-
-      for (let i = 0; i < txIndex; i++) {
-        if (state.transactions[i].network === network) {
-          state.transactions[i].floatAfter += floatChange;
-        }
-      }
-
-      document.getElementById(`input-${network}-float`).value = state[network].float;
-      document.getElementById('input-cash').value = state.cash;
-      updateBalancesDisplay();
-
-      state.transactions.splice(txIndex, 1);
-      persist();
-      renderBooks();
-    }
-
-    // --- Transaction Details & Edit ---
-    function viewTransactionDetails(id, network) {
-      const tx = state.transactions.find(t => t.id === id);
-      if (!tx) return;
-
-      document.getElementById('det-tx-id').value = tx.id;
-      document.getElementById('det-tx-network').value = tx.network;
-
-      const colorCls = getTxColorClass(tx.type);
-      document.getElementById('det-type').innerHTML = `<span class="${colorCls}">${tx.type}</span>`;
-      document.getElementById('det-amount').innerText = formatMoney(tx.amount) + ' UGX';
-      document.getElementById('det-datetime').innerText = `${tx.dateStr} ${formatTime(tx.timestamp)}`;
-      document.getElementById('det-custno').innerText = tx.customerNo || 'N/A';
-      document.getElementById('det-name').innerText = tx.note || 'N/A';
-      document.getElementById('det-desc').innerText = tx.description || 'N/A';
-      document.getElementById('det-eb').innerText = formatMoney(tx.floatAfter) + ' UGX';
-
-      // Populate edit form
-      document.getElementById('edit-amount').value = tx.amount;
-      document.getElementById('edit-customerNo').value = tx.customerNo || '';
-      document.getElementById('edit-note').value = tx.note || '';
-      document.getElementById('edit-description').value = tx.description || '';
-
-      toggleEditMode(false);
-      openModal('tx-details-modal');
-    }
-
-    function closeDetailsModal() {
-      closeModal('tx-details-modal');
-    }
-
-    function toggleEditMode(show) {
-      const txId = document.getElementById('det-tx-id').value;
-      const tx = state.transactions.find(t => t.id === txId);
-      if (show && tx && tx.locked) {
-        alert("Cannot edit locked transactions from previous days.");
-        return;
-      }
-      document.getElementById('details-view-mode').style.display = show ? 'none' : 'block';
-      document.getElementById('edit-form').style.display = show ? 'block' : 'none';
-    }
-
-    function deleteFromDetails() {
-      const txId = document.getElementById('det-tx-id').value;
-      const network = document.getElementById('det-tx-network').value;
-      const tx = state.transactions.find(t => t.id === txId);
-      if (tx && tx.locked) {
-        alert("Cannot delete locked transactions from previous days.");
-        return;
-      }
-      closeDetailsModal();
-      // small timeout to allow modal animation
-      setTimeout(() => deleteTransaction(txId, network), 100);
-    }
-
-    function submitEditTransaction(e) {
-      e.preventDefault();
-      const txId = document.getElementById('det-tx-id').value;
-      const txIndex = state.transactions.findIndex(t => t.id === txId);
-      if (txIndex === -1) return;
-      const tx = state.transactions[txIndex];
-      const network = tx.network;
-
-      const newAmount = parseFloat(document.getElementById('edit-amount').value);
-      const newCustomerNo = document.getElementById('edit-customerNo').value.trim();
-      const newNote = document.getElementById('edit-note').value.trim();
-      const newDesc = document.getElementById('edit-description').value.trim();
-
-      if (isNaN(newAmount) || newAmount <= 0) {
-        alert("Enter a valid amount.");
-        return;
-      }
-
-      // Handle float updates if amount changed
-      if (newAmount !== tx.amount) {
-        let amountDiff = newAmount - tx.amount;
-        let floatDiff = 0;
-        let cashDiff = 0;
-
-        if (['Cash In', 'Airtime', 'Bundle', 'Withdraw Float'].includes(tx.type)) {
-          floatDiff = -amountDiff;
-          cashDiff = amountDiff;
-        } else if (['Cash Out', 'Deposit Float'].includes(tx.type)) {
-          floatDiff = amountDiff;
-          cashDiff = -amountDiff;
-        }
-
-        state[network].float += floatDiff;
-        state.cash += cashDiff;
-
-        // Update subsequent transactions
-        for (let i = 0; i < txIndex; i++) {
-          if (state.transactions[i].network === network) {
-            state.transactions[i].floatAfter += floatDiff;
-          }
-        }
-        tx.floatAfter += floatDiff;
-        
-        document.getElementById(`input-${network}-float`).value = state[network].float;
-        document.getElementById('input-cash').value = state.cash;
-        updateBalancesDisplay();
-      }
-
-      tx.amount = newAmount;
-      tx.customerNo = newCustomerNo;
-      tx.note = newNote;
-      tx.description = newDesc;
-
-      persist();
-      closeDetailsModal();
-      renderBooks();
-    }
-
-    // --- Rendering Books ---
-    function getTxColorClass(type) {
-      if (['Cash In', 'Airtime', 'Bundle'].includes(type)) return 'color-in';
-      if (type === 'Cash Out') return 'color-out';
-      return 'color-float';
-    }
-
-    // Build the branded log-book header HTML
-    function renderLogbookHeader(network) {
-      const isAirtel = network === 'airtel';
-      const cls = isAirtel ? 'airtel-header' : 'mtn-header';
-      const logoCls = isAirtel ? 'airtel-logo' : 'mtn-logo';
-      const emoji = isAirtel ? 'A' : 'M';
-      const brandName = isAirtel ? 'AIRTEL MONEY' : 'MTN MOBILE MONEY';
-      return `
-        <div class="logbook-header ${cls}">
-          <div class="logbook-logo ${logoCls}">${emoji}</div>
-          <div class="logbook-title-block">
-            <div class="brand-name">${brandName}</div>
-            <div class="book-title">Agent Transaction Log Book</div>
-          </div>
-          <div class="logbook-logo ${logoCls}">${emoji}</div>
-        </div>
-      `;
-    }
-
-    // Build the log-book table HTML for an array of transactions
-    // Visible on ALL phones (5 cols): TIME | NAME | TYPE | AMOUNT | E.B
-    // Hidden on mobile (col-mobile-hide): S/N only
-    function renderLogbookTable(txs, network, startSN) {
-      const cls = network === 'airtel' ? 'airtel-wrap' : 'mtn-wrap';
-      const theadCls = network === 'airtel' ? 'airtel-thead' : 'mtn-thead';
-
-      let html = `
-        <div class="logbook-wrap ${cls}">
-          <table class="logbook-table">
-            <thead class="${theadCls}">
-              <tr>
-                <th class="col-mobile-hide">S/N</th>
-                <th>TIME</th>
-                <th>CUST. NO.</th>
-                <th>NAME</th>
-                <th>TYPE</th>
-                <th>AMOUNT</th>
-                <th>E.B</th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-
-      if (txs.length === 0) {
-        html += `<tr><td colspan="7" class="logbook-empty">No transactions recorded yet.</td></tr>`;
-      } else {
-        let sn = startSN || 1;
-        // txs are newest-first; show oldest-first in table (reverse)
-        [...txs].reverse().forEach(tx => {
-          const colorCls = getTxColorClass(tx.type);
-          const displayName = tx.note || tx.description || '—';
-          html += `
-            <tr onclick="viewTransactionDetails('${tx.id}', '${network}')" class="deletable-row" title="Tap to view/edit">
-              <td class="sn-cell col-mobile-hide">${sn++}</td>
-              <td class="time-cell">${formatTime(tx.timestamp)}</td>
-              <td style="overflow:hidden;text-overflow:ellipsis;">${tx.customerNo || '—'}</td>
-              <td style="overflow:hidden;text-overflow:ellipsis;">${displayName}</td>
-              <td><span class="${colorCls}" style="font-weight:700;">${tx.type}</span></td>
-              <td class="amount-cell ${colorCls}">${formatMoney(tx.amount)}</td>
-              <td class="bal-cell">${formatMoney(tx.floatAfter)}</td>
-            </tr>
-          `;
-        });
-      }
-
-      html += `</tbody></table></div>`;
-      return html;
-    }
-
-    function renderBooks() {
-      const today = getTodayStr();
-      ['airtel', 'mtn'].forEach(network => {
-        const picker = document.getElementById(`${network}-date-picker`);
-        const selectedDate = picker && picker.value ? picker.value : today;
-        
-        const netTxs = state.transactions.filter(t => t.network === network);
-        const selectedTxs = netTxs.filter(t => t.dateStr === selectedDate);
-        const pastTxs = netTxs.filter(t => t.dateStr !== selectedDate);
-
-        const todayContainer = document.getElementById(`${network}-today-container`);
-        if(todayContainer) {
-          todayContainer.innerHTML = `
-            <div style="margin-top:16px;">
-              ${renderLogbookHeader(network)}
-              ${renderLogbookTable(selectedTxs, network, 1)}
-            </div>
-          `;
-        }
-
-        const historyContainer = document.getElementById(`${network}-history-container`);
-        if(historyContainer) {
-          if (pastTxs.length === 0) {
-            historyContainer.innerHTML = '';
-            return;
-          }
-
-          const grouped = {};
-          pastTxs.forEach(t => {
-            if (!grouped[t.dateStr]) grouped[t.dateStr] = [];
-            grouped[t.dateStr].push(t);
-          });
-
-          let histHtml = `<div class="past-days-title">📅 Previous Transactions by Date</div>`;
-          
-          Object.keys(grouped).sort().reverse().forEach(date => {
-            const dayTxs = grouped[date];
-            const count = dayTxs.length;
-            const endBal = dayTxs[0].floatAfter;
-            
-            histHtml += `
-              <button class="collapsible" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block';">
-                <span>${date}</span>
-                <span>${count} txs | Bal: ${formatMoney(endBal)}</span>
-              </button>
-              <div class="content-collapse">
-                ${renderLogbookTable(dayTxs, network, 1)}
-              </div>
-            `;
-          });
-          historyContainer.innerHTML = histHtml;
-        }
-      });
-    }
-
-    // --- Summary ---
-    function setSummaryRange(range, btnElement) {
-      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-      btnElement.classList.add('active');
-      state.summaryRange = range;
-      updateSummary();
-    }
-
-    function isDateInRange(dateStr, range) {
-      if (range === 'today') return dateStr === getTodayStr();
-      const d = new Date(dateStr);
-      const now = new Date();
-      if (range === 'month') return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-      if (range === 'week') {
-        const pastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        return d >= pastWeek;
-      }
-      return true;
-    }
-
-    function calculateStats(networkTxs) {
-      let cashIn = 0, cashOut = 0;
-      networkTxs.forEach(tx => {
-        if (tx.type === 'Cash In') cashIn += tx.amount;
-        if (tx.type === 'Cash Out') cashOut += tx.amount;
-      });
-      const comm = (cashIn * 0.006) + (cashOut * 0.006);
-      return { count: networkTxs.length, in: cashIn, out: cashOut, comm: comm };
-    }
-
-    function updateSummary() {
-      const filtered = state.transactions.filter(t => isDateInRange(t.dateStr, state.summaryRange));
-      const airtelStats = calculateStats(filtered.filter(t => t.network === 'airtel'));
-      const mtnStats = calculateStats(filtered.filter(t => t.network === 'mtn'));
-
-      document.getElementById('sum-airtel-in').innerText = formatMoney(airtelStats.in);
-      document.getElementById('sum-airtel-out').innerText = formatMoney(airtelStats.out);
-      document.getElementById('sum-airtel-count').innerText = airtelStats.count;
-      document.getElementById('sum-airtel-comm').innerText = formatMoney(airtelStats.comm);
-
-      document.getElementById('sum-mtn-in').innerText = formatMoney(mtnStats.in);
-      document.getElementById('sum-mtn-out').innerText = formatMoney(mtnStats.out);
-      document.getElementById('sum-mtn-count').innerText = mtnStats.count;
-      document.getElementById('sum-mtn-comm').innerText = formatMoney(mtnStats.comm);
-
-      document.getElementById('sum-total-in').innerText = formatMoney(airtelStats.in + mtnStats.in);
-      document.getElementById('sum-total-out').innerText = formatMoney(airtelStats.out + mtnStats.out);
-      document.getElementById('sum-total-comm').innerText = formatMoney(airtelStats.comm + mtnStats.comm);
-    }
-
-    function endOfDay() {
-      if (!confirm("This will lock today's transactions so they cannot be edited. Continue?")) return;
-      const today = getTodayStr();
-      state.transactions.forEach(t => { if (t.dateStr === today) t.locked = true; });
-      persist();
-      alert("Day ended successfully. Transactions locked.");
-      renderBooks();
-    }
-
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-      const a = document.createElement('a');
-      a.href = dataStr;
-      a.download = "agentbook_backup_" + getTodayStr() + ".json";
-      document.body.appendChild(a); 
-      a.click();
-      a.remove();
-    }
-
-    function clearAllData() {
-      if(confirm("DANGER! This will delete ALL transactions permanently. Are you absolutely sure?")) {
-        if(confirm("Really clear all data? This cannot be undone.")) {
-          localStorage.removeItem(STORAGE_KEY);
-          location.reload();
-        }
-      }
-    }
-
-    // PWA Service Worker for true offline phone installation
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch((err) => console.log('SW Registration failed', err));
-      });
-    }
-
-    window.onload = init;
-  </script>
+  <!-- MODAL 5: SECURITY PIN & BIOMETRIC LOCK SCREEN -->
+  <div id="modalLock" class="modal-overlay">
+    <div class="modal-box" style="max-width: 340px; text-align: center;">
+      <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
+      <h2 style="font-size: 20px; font-weight: 700;">AgentOS Security Lock</h2>
+      <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 18px 0;">Enter agent Security PIN or use Fingerprint Biometrics</p>
+
+      <div class="numpad-display" id="pinDisplay" style="text-align: center; letter-spacing: 8px;">••••</div>
+
+      <div class="numpad-grid" style="margin-bottom: 16px;">
+        <button class="numpad-btn" onclick="AgentOS.pressPin('1')">1</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('2')">2</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('3')">3</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('4')">4</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('5')">5</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('6')">6</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('7')">7</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('8')">8</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('9')">9</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('C')" style="color: var(--danger)">C</button>
+        <button class="numpad-btn" onclick="AgentOS.pressPin('0')">0</button>
+        <button class="numpad-btn" onclick="AgentOS.unlockBiometric()">☝️</button>
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%;" onclick="AgentOS.verifyPin()">Unlock AgentOS</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
